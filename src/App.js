@@ -1,12 +1,12 @@
 import Chessboard from 'chessboardjsx';
 import Chess from 'chess.js';
-import { Component, useState} from 'react';
+import { Component} from 'react';
 import PropTypes from 'prop-types';
 
-import {Button, TomatoButton} from './components/StyledComponents';
+import {Button, PlayAsButton} from './StyledComponents';
+import { roughSquare } from './customRough';
 
 const axios = require('axios');
-
 
 
 class NormalGame extends Component {
@@ -81,6 +81,7 @@ class NormalGame extends Component {
   }
 } 
 
+/*
 function TalkToServerBox(props) {
 
   const [text, setText] = useState("Default");
@@ -98,6 +99,7 @@ function TalkToServerBox(props) {
     </div>
   )
 }
+*/
 
 function NormalGameBoard() {
 
@@ -116,9 +118,14 @@ function NormalGameBoard() {
               borderRadius: '5px',
               boxShadow: `0 5px 15px rgba(0, 0, 0, 0.5)`
             }}
+            roughSquare={roughSquare}
             onSquareClick={onSquareClick}
             squareStyles={squareStyles}
+            lightSquareStyle={{ backgroundColor: "AliceBlue" }}
+            darkSquareStyle={{ backgroundColor: "CornFlowerBlue" }}
             />
+            <PlayAsButton>Play as White</PlayAsButton>
+            <PlayAsButton black>Play as Black</PlayAsButton>
           </div>
         )}
       </NormalGame>
