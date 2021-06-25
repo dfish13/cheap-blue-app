@@ -1,7 +1,13 @@
 import Chessboard from 'chessboardjsx';
 import Chess from 'chess.js';
-import { Component } from 'react';
+import { Component, useState} from 'react';
 import PropTypes from 'prop-types';
+
+import {Button, TomatoButton} from './components/StyledComponents';
+
+const axios = require('axios');
+
+
 
 class NormalGame extends Component {
   static propTypes = { children: PropTypes.func };
@@ -42,16 +48,30 @@ class NormalGame extends Component {
     this.setState({ fen: this.game.fen() });
   };
 
+  makeEngineMove = () => {
+    axios.post('/move', { fen: this.game.fen()})
+    .then((res) => {
+      this.game.move(res.data);
+      this.setState({ fen: this.game.fen() });
+    })
+    .catch((err) => console.log(err));
+  }
+
   takeBack = () => {
     let move = this.game.undo();
     if (move === null) return;
 
     this.setState({ fen: this.game.fen() });
-  } 
+  }
+
+  getFen = () => {
+    return this.game.fen();
+  }
 
   render() {
     const { fen, squareStyles } = this.state;
     return this.props.children({
+      makeEngineMove: this.makeEngineMove,
       position: fen,
       onDrop: this.onDrop,
       onSquareClick: this.onSquareClick,
@@ -59,15 +79,34 @@ class NormalGame extends Component {
       takeBack: this.takeBack
     });
   }
+} 
+
+function TalkToServerBox(props) {
+
+  const [text, setText] = useState("Default");
+
+  const talkToServer = () => {
+    axios.post('/move', { fen: props.getFen()})
+    .then((res) => {setText(res.data)})
+    .catch((err) => console.log(err));
+  }
+
+  return (
+    <div>
+      <button onClick={talkToServer}> Talk To Server </button>
+      <textarea value={text}/>
+    </div>
+  )
 }
 
 function NormalGameBoard() {
 
   return (
     <NormalGame>
-        {({ position, onDrop, onSquareClick, squareStyles, takeBack }) => (
+        {({ makeEngineMove, position, onDrop, onSquareClick, squareStyles, takeBack }) => (
           <div>
-            <button onClick={takeBack}> Take Back </button>
+            <Button onClick={takeBack}> Take Back </Button>
+            <Button onClick={makeEngineMove}> Make Engine Move </Button>
             <Chessboard
             calcWidth={({ screenWidth }) => (screenWidth < 500 ? 350 : 480)}
             id="normalGame"
@@ -86,25 +125,10 @@ function NormalGameBoard() {
   )
 }
 
-function TalkToServerBox() {
-
-  const talkToServer = () => {
-
-  }
-
-  return (
-    <div>
-      <button onClick={talkToServer}> Talk to Server </button>
-      <textarea></textarea>
-    </div>
-  )
-}
-
 function App() {
   return (
     <div className="App">
         <NormalGameBoard/>
-        <TalkToServerBox/> 
     </div>
   );
 }
