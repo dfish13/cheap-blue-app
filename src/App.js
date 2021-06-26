@@ -12,7 +12,7 @@ const axios = require('axios');
 class NormalGame extends Component {
   static propTypes = { children: PropTypes.func };
 
-  state = { fen: 'start', squareStyles: {}, pieceSquare: ''};
+  state = { fen: 'start', squareStyles: {}, pieceSquare: '', side: 'white'};
 
   componentDidMount() {
     this.game = new Chess();
@@ -64,22 +64,28 @@ class NormalGame extends Component {
     this.setState({ fen: this.game.fen() });
   }
 
+  pickSide = (color) => {
+    this.setState({side: color});
+  }
+
   getFen = () => {
     return this.game.fen();
   }
 
   render() {
-    const { fen, squareStyles } = this.state;
+    const { fen, squareStyles, side} = this.state;
     return this.props.children({
       makeEngineMove: this.makeEngineMove,
       position: fen,
       onDrop: this.onDrop,
       onSquareClick: this.onSquareClick,
       squareStyles,
-      takeBack: this.takeBack
+      takeBack: this.takeBack,
+      pickSide: this.pickSide,
+      side: side
     });
   }
-} 
+}
 
 /*
 function TalkToServerBox(props) {
@@ -105,7 +111,7 @@ function NormalGameBoard() {
 
   return (
     <NormalGame>
-        {({ makeEngineMove, position, onDrop, onSquareClick, squareStyles, takeBack }) => (
+        {({ makeEngineMove, position, onDrop, onSquareClick, squareStyles, takeBack, pickSide, side }) => (
           <div>
             <Button onClick={takeBack}> Take Back </Button>
             <Button onClick={makeEngineMove}> Make Engine Move </Button>
@@ -123,9 +129,10 @@ function NormalGameBoard() {
             squareStyles={squareStyles}
             lightSquareStyle={{ backgroundColor: "AliceBlue" }}
             darkSquareStyle={{ backgroundColor: "CornFlowerBlue" }}
+            orientation={side}
             />
-            <PlayAsButton>Play as White</PlayAsButton>
-            <PlayAsButton black>Play as Black</PlayAsButton>
+            <PlayAsButton onClick={() => pickSide('white')}>Play as White</PlayAsButton>
+            <PlayAsButton onClick={() => pickSide('black')} black>Play as Black</PlayAsButton>
           </div>
         )}
       </NormalGame>
