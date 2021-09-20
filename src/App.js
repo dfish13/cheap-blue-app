@@ -1,18 +1,23 @@
 import Chessboard from 'chessboardjsx';
 import Chess from 'chess.js';
-import { Component} from 'react';
+import {useEffect, useState, Component} from 'react';
 import PropTypes from 'prop-types';
 
 import {Button, PlayAsButton} from './StyledComponents';
 import { roughSquare } from './customRough';
+import PerftUtil from './PerftUtil';
 
 const axios = require('axios');
-
 
 class NormalGame extends Component {
   static propTypes = { children: PropTypes.func };
 
-  state = { fen: 'start', squareStyles: {}, pieceSquare: '', side: 'white'};
+  state = {
+    fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+    squareStyles: {},
+    pieceSquare: '',
+    side: 'white'
+  };
 
   componentDidMount() {
     this.game = new Chess();
@@ -48,10 +53,19 @@ class NormalGame extends Component {
     this.setState({ fen: this.game.fen() });
   };
 
+  perf
+
   makeEngineMove = () => {
     axios.post('/move', { fen: this.game.fen()})
     .then((res) => {
-      this.game.move(res.data);
+      if (res.data === "None")
+      {
+        console.log('No legal moves.')
+        return;
+      }
+
+      // Setting sloppy to true allows it to parse cheap blue's non standard move notation.
+      this.game.move(res.data, {sloppy: true});
       this.setState({ fen: this.game.fen() });
     })
     .catch((err) => console.log(err));
@@ -68,6 +82,17 @@ class NormalGame extends Component {
     this.setState({side: color});
   }
 
+  getFenFromChild = (fen) => {
+    const test = this.game.validate_fen(fen)
+    if (test.valid)
+    {
+      this.game.load(fen)
+      this.setState({ fen: this.game.fen() })
+    }
+    else
+      console.log(test.error)
+  }
+
   getFen = () => {
     return this.game.fen();
   }
@@ -82,36 +107,38 @@ class NormalGame extends Component {
       squareStyles,
       takeBack: this.takeBack,
       pickSide: this.pickSide,
+      passFenUp: this.getFenFromChild,
       side: side
     });
   }
 }
 
-/*
-function TalkToServerBox(props) {
+const FenBox = ({fen, passFenUp}) => {
 
-  const [text, setText] = useState("Default");
+  const [fenString, setFenString] = useState(fen)
 
-  const talkToServer = () => {
-    axios.post('/move', { fen: props.getFen()})
-    .then((res) => {setText(res.data)})
-    .catch((err) => console.log(err));
+
+  // Because fen never changes after component is created this effect is only performed once.
+  useEffect(() => setFenString(fen), [fen])
+
+  const loadFen = () => {
+    passFenUp(fenString)
   }
 
   return (
     <div>
-      <button onClick={talkToServer}> Talk To Server </button>
-      <textarea value={text}/>
+      <button onClick={loadFen}>Load FEN</button>
+      <textarea cols={fenString.length + 1} value={fenString} onChange={(e) => {setFenString(e.target.value)}}/>
     </div>
   )
 }
-*/
+
 
 function NormalGameBoard() {
 
   return (
     <NormalGame>
-        {({ makeEngineMove, position, onDrop, onSquareClick, squareStyles, takeBack, pickSide, side }) => (
+        {({ makeEngineMove, position, onDrop, onSquareClick, squareStyles, takeBack, pickSide, passFenUp, side }) => (
           <div>
             <Button onClick={takeBack}> Take Back </Button>
             <Button onClick={makeEngineMove}> Make Engine Move </Button>
@@ -133,6 +160,9 @@ function NormalGameBoard() {
             />
             <PlayAsButton onClick={() => pickSide('white')}>Play as White</PlayAsButton>
             <PlayAsButton onClick={() => pickSide('black')} black>Play as Black</PlayAsButton>
+            <br/>
+            <FenBox fen={position} passFenUp={passFenUp}/>
+            <PerftUtil fen={position}/>
           </div>
         )}
       </NormalGame>

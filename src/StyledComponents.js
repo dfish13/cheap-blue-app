@@ -23,4 +23,14 @@ const TomatoButton = styled(Button)`
   border-color: tomato;
 `;
 
-export {Button, TomatoButton, PlayAsButton};
+const Table = styled.table`
+  border-spacing: 0
+  border: 1px solid black
+  border-radius: 3px;
+`;
+
+const Td = styled.td`
+  border: 1px solid black
+`;
+
+export {Button, TomatoButton, PlayAsButton, Table, Td};

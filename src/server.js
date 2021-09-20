@@ -2,7 +2,8 @@ const express = require('express')
 var cors = require('cors')
 var app = express()
 
-const { Chess } = require('chess.js')
+const util = require('util');
+const execFile = util.promisify(require('child_process').execFile);
 
 const port = 4000
 
@@ -15,11 +16,37 @@ app.get('/', (req, res) => {
 })
 
 app.post('/move', (req, res) => {
-  console.log(req.body);
-  const chess = new Chess(req.body.fen);
-  const moves = chess.moves();
+  execFile('./cheapblue', ['-m', req.body.fen])
+  .then(({stdout}) => {
+    console.log(stdout)
+    res.send(stdout);
+  })
+  .catch((err) => console.log(err));
+})
 
-  res.send(moves[Math.floor(Math.random() * moves.length)]);
+const parsePerftOutput = (output) => {
+  const lines = output.split(/\n/)
+
+  const divided = lines.slice(1, lines.length - 2).map((s) => {
+    const arr = s.split(/(\s+)/)
+    return {
+      move: arr[0],
+      nodes: Number(arr[2])
+    }
+  })
+
+  return {
+    divided: divided,
+    nodes: Number(lines[lines.length - 2].split(/(\s+)/)[6])
+  }
+}
+
+app.post('/perft', (req, res) => {
+  execFile('./cheapblue', ['-p', req.body.depth, req.body.fen])
+  .then(({stdout}) => {
+    res.json(parsePerftOutput(stdout))
+  })
+  .catch((err) => console.log(err))
 })
 
 app.listen(port, () => {

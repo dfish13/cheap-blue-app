@@ -24,3 +24,6 @@ yarn-error.log*
 
 # stores private connection info
 /private
+
+# Cheap Blue engine
+src/cheapblue
