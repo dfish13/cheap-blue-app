@@ -6,7 +6,7 @@ const axios = require('axios');
 
 const DepthSlider = ({startDepth, min, max, changeCallback}) => {
 
-    const [depth, setDepth] = useState(null);
+    const [depth, setDepth] = useState(startDepth);
     const [mouseState, setMouseState] = useState(null);
 
     useEffect(() => setDepth(startDepth), [startDepth])

@@ -18,7 +18,6 @@ app.get('/', (req, res) => {
 app.post('/move', (req, res) => {
   execFile('./cheapblue', ['-m', req.body.fen])
   .then(({stdout}) => {
-    console.log(stdout)
     res.send(stdout);
   })
   .catch((err) => console.log(err));

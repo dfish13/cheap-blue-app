@@ -3,12 +3,11 @@ import styled from "styled-components";
 
 const Button = styled.button`
   color: white;
-  background: cornflowerblue;
-  font-size: 1.3em;
-  font-family: courier;
-  margin: 0.25em;
-  padding: 0.25em 1em;
-  border: 2px solid cornflowerblue;
+  background: royalblue;
+  font-size: 1em;
+  margin: 0.2em;
+  padding: 0.2em 1em;
+  border: 2px solid royalblue;
   border-radius: 3px;
 `;
 

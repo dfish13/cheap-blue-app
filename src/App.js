@@ -141,7 +141,9 @@ function NormalGameBoard() {
         {({ makeEngineMove, position, onDrop, onSquareClick, squareStyles, takeBack, pickSide, passFenUp, side }) => (
           <div>
             <Button onClick={takeBack}> Take Back </Button>
-            <Button onClick={makeEngineMove}> Make Engine Move </Button>
+            <Button onClick={makeEngineMove}> Engine Move </Button>
+            <PlayAsButton onClick={() => pickSide('white')}>Play White</PlayAsButton>
+            <PlayAsButton onClick={() => pickSide('black')} black>Play Black</PlayAsButton>
             <Chessboard
             calcWidth={({ screenWidth }) => (screenWidth < 500 ? 350 : 480)}
             id="normalGame"
@@ -151,15 +153,13 @@ function NormalGameBoard() {
               borderRadius: '5px',
               boxShadow: `0 5px 15px rgba(0, 0, 0, 0.5)`
             }}
-            roughSquare={roughSquare}
+            // roughSquare={roughSquare}
             onSquareClick={onSquareClick}
             squareStyles={squareStyles}
-            lightSquareStyle={{ backgroundColor: "AliceBlue" }}
-            darkSquareStyle={{ backgroundColor: "CornFlowerBlue" }}
+            lightSquareStyle={{ backgroundColor: "Cornsilk" }}
+            darkSquareStyle={{ backgroundColor: "RoyalBlue" }}
             orientation={side}
             />
-            <PlayAsButton onClick={() => pickSide('white')}>Play as White</PlayAsButton>
-            <PlayAsButton onClick={() => pickSide('black')} black>Play as Black</PlayAsButton>
             <br/>
             <FenBox fen={position} passFenUp={passFenUp}/>
             <PerftUtil fen={position}/>
