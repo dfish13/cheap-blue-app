@@ -4,7 +4,6 @@ import {useEffect, useState, Component} from 'react';
 import PropTypes from 'prop-types';
 
 import {Button, PlayAsButton} from './StyledComponents';
-import { roughSquare } from './customRough';
 import PerftUtil from './PerftUtil';
 
 const axios = require('axios');
@@ -33,6 +32,8 @@ class NormalGame extends Component {
     if (move === null) return;
 
     this.setState({fen: this.game.fen()});
+
+    this.makeEngineMove()
   };
 
   onSquareClick = square => {
