@@ -23,7 +23,7 @@ class NormalGame extends Component {
   }
 
   onDrop = ({ sourceSquare, targetSquare }) => {
-    var move = this.game.move({
+    let move = this.game.move({
       from: sourceSquare,
       to: targetSquare,
       promotion: 'q'
@@ -32,7 +32,6 @@ class NormalGame extends Component {
     if (move === null) return;
 
     this.setState({fen: this.game.fen()});
-
     this.makeEngineMove()
   };
 
@@ -52,9 +51,8 @@ class NormalGame extends Component {
     if (move === null) return;
 
     this.setState({ fen: this.game.fen() });
+    this.makeEngineMove()
   };
-
-  perf
 
   makeEngineMove = () => {
     axios.post('/move', { fen: this.game.fen()})
