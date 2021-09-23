@@ -1,14 +1,27 @@
 const express = require('express')
-var cors = require('cors')
-var app = express()
+const cors = require('cors')
+const app = express()
+
+require('dotenv').config();
 
 const util = require('util');
 const execFile = util.promisify(require('child_process').execFile);
+
+const session = require('express-session')
 
 const port = 4000
 
 app.use(cors())
 app.use(express.json())
+app.use(session({
+  secret: process.env.SECRET,
+  saveUninitialized: true,
+  resave: false,
+  cookie: {
+    httpOnly: true,
+    maxAge: parseInt(process.env.MAXAGE)
+  }
+}))
 
 app.get('/', (req, res) => {
   console.log(req.body);
@@ -18,7 +31,8 @@ app.get('/', (req, res) => {
 app.post('/move', (req, res) => {
   execFile('./cheapblue', ['-m', req.body.fen])
   .then(({stdout}) => {
-    res.send(stdout);
+    console.log(stdout)
+    res.send(stdout)
   })
   .catch((err) => console.log(err));
 })

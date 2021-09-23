@@ -133,14 +133,14 @@ const FenBox = ({fen, passFenUp}) => {
 }
 
 
-function NormalGameBoard() {
+const NormalGameBoard = ({admin}) => {
 
   return (
     <NormalGame>
         {({ makeEngineMove, position, onDrop, onSquareClick, squareStyles, takeBack, pickSide, passFenUp, side }) => (
           <div>
             <Button onClick={takeBack}> Take Back </Button>
-            <Button onClick={makeEngineMove}> Engine Move </Button>
+            {admin && <Button onClick={makeEngineMove}> Engine Move </Button>}
             <PlayAsButton onClick={() => pickSide('white')}>Play White</PlayAsButton>
             <PlayAsButton onClick={() => pickSide('black')} black>Play Black</PlayAsButton>
             <Chessboard
@@ -160,8 +160,12 @@ function NormalGameBoard() {
             orientation={side}
             />
             <br/>
-            <FenBox fen={position} passFenUp={passFenUp}/>
-            <PerftUtil fen={position}/>
+            {admin &&
+              <div>
+                <FenBox fen={position} passFenUp={passFenUp}/>
+                <PerftUtil fen={position}/>
+              </div>
+            }
           </div>
         )}
       </NormalGame>
@@ -171,7 +175,7 @@ function NormalGameBoard() {
 function App() {
   return (
     <div className="App">
-        <NormalGameBoard/>
+        <NormalGameBoard admin/>
     </div>
   );
 }

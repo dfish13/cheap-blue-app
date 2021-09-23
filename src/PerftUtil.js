@@ -70,7 +70,7 @@ const PerftUtil = ({fen}) => {
     return (
         <div>
             <DepthSlider startDepth={2} min={1} max={8} changeCallback={setDepth}/>
-            <button onClick={perft}>Do Perft</button>
+            <button onClick={perft}>Go Perft</button>
             <Table>
                 <th>
                     <td>Move</td>
