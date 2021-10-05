@@ -1,0 +1,18 @@
+version: "3.9"
+services:
+  cb-app:
+    image: cb-app
+    build:
+      context: ./app
+      dockerfile: ./app/Dockerfile
+    links:
+      - "cb-server:engine"
+    ports:
+      - "3000:3000"
+  cb-server:
+    image: cb-server
+    build:
+      context: ./server
+      dockerfile: ./server/Dockerfile
+    ports:
+      - "4000:4000"

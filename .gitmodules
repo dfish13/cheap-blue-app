@@ -1,0 +1,3 @@
+[submodule "server/cheap-blue"]
+	path = server/cheap-blue
+	url = https://github.com/dfish13/cheap-blue.git
