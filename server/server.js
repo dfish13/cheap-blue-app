@@ -4,10 +4,22 @@ const app = express()
 
 require('dotenv').config();
 
-const util = require('util');
-const execFile = util.promisify(require('child_process').execFile);
+const util = require('util')
+const execFile = util.promisify(require('child_process').execFile)
+
+const { Pool } = require('pg')
+const pool = new Pool({
+  user: 'duncan',
+  host: 'postgres',
+  database: 'cheap_blue_db',
+  password: 'asdf',
+  port: 5432,
+})
 
 const session = require('express-session')
+const crypto = require('crypto')
+const bcrypt = require('bcryptjs')
+const saltRounds = 10;
 
 const port = 4000
 
@@ -15,7 +27,7 @@ app.use(cors())
 app.use(express.json())
 app.use(session({
   secret: process.env.SECRET,
-  saveUninitialized: true,
+  saveUninitialized: false,
   resave: false,
   cookie: {
     httpOnly: true,
@@ -24,8 +36,9 @@ app.use(session({
 }))
 
 app.get('/', (req, res) => {
-  console.log(req.body);
-  res.send('Hello World!')
+  pool.query('SELECT * FROM players', (err, qRes) => {
+    res.json(qRes.rows)
+  })
 })
 
 app.post('/move', (req, res) => {
@@ -35,6 +48,18 @@ app.post('/move', (req, res) => {
     res.send(stdout)
   })
   .catch((err) => console.log(err));
+})
+
+app.post('/addplayer', (req, res) => {
+  const querytext = 'INSERT INTO players (player_name, player_token) VALUES ($1, $2)'
+  const token = crypto.randomBytes(10).toString('hex')
+
+  bcrypt.genSalt(saltRounds, (err, salt) => {
+    bcrypt.hash(token, salt, (err, hash) => {
+      pool.query(querytext, [req.body.name, hash])
+      res.send(token)
+    });
+  });
 })
 
 const parsePerftOutput = (output) => {

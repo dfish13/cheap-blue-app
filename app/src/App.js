@@ -112,6 +112,32 @@ class NormalGame extends Component {
   }
 }
 
+
+// Component for adding a player and generating a token for them.
+const GenToken = () => {
+  const [name, setName] = useState('')
+  const [token, setToken] = useState(null)
+
+  const addPlayer = () => {
+    axios.post('/addplayer', {name: name})
+    .then((res) => {
+      setToken(res.data)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+  }
+  
+  return (
+    <div>
+      <textarea value={name} onChange={(e) => {setName(e.target.value)}}/>
+      <br/>
+      {token && <p>Token = {token}</p>}
+      <button onClick={addPlayer}>Get Token</button>
+    </div>
+  )
+}
+
 const FenBox = ({fen, passFenUp}) => {
 
   const [fenString, setFenString] = useState(fen)
@@ -126,8 +152,9 @@ const FenBox = ({fen, passFenUp}) => {
 
   return (
     <div>
-      <button onClick={loadFen}>Load FEN</button>
       <textarea cols={fenString.length + 1} value={fenString} onChange={(e) => {setFenString(e.target.value)}}/>
+      <br/>
+      <button onClick={loadFen}>Load FEN</button>
     </div>
   )
 }
@@ -162,6 +189,7 @@ const NormalGameBoard = ({admin}) => {
             <br/>
             {admin &&
               <div>
+                <GenToken/>
                 <FenBox fen={position} passFenUp={passFenUp}/>
                 <PerftUtil fen={position}/>
               </div>
