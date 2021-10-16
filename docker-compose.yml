@@ -10,6 +10,8 @@ services:
       - "cb-server:engine"
     ports:
       - "3000:3000"
+    volumes:
+      - /home/duncanfish/git/cheap-blue-app/app/src:/app/src
   
   cb-server:
     container_name: cb-server
@@ -36,7 +38,8 @@ services:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
-      - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+      - ./sql/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+      - ./server/node_modules/connect-pg-simple/table.sql:/docker-entrypoint-initdb.d/table.sql
       - ./secrets/postgres-password:/secrets/postgres-password
 
   pgadmin:

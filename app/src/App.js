@@ -1,211 +1,150 @@
-import Chessboard from 'chessboardjsx';
-import Chess from 'chess.js';
-import {useEffect, useState, Component} from 'react';
-import PropTypes from 'prop-types';
+import React, { useState } from "react";
 
-import {Button, PlayAsButton} from './StyledComponents';
-import PerftUtil from './PerftUtil';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+  useHistory,
+  useLocation
+} from "react-router-dom";
 
-const axios = require('axios');
+import Navbar from "./components/NavBar";
 
-class NormalGame extends Component {
-  static propTypes = { children: PropTypes.func };
+import Game from './Game.js'
+import GameConfig from "./components/GameConfig"
 
-  state = {
-    fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
-    squareStyles: {},
-    pieceSquare: '',
-    side: 'white'
-  };
+import { ProvideAuth, useAuth } from './hooks/useAuth'
 
-  componentDidMount() {
-    this.game = new Chess();
-  }
-
-  onDrop = ({ sourceSquare, targetSquare }) => {
-    let move = this.game.move({
-      from: sourceSquare,
-      to: targetSquare,
-      promotion: 'q'
-    });
-
-    if (move === null) return;
-
-    this.setState({fen: this.game.fen()});
-    this.makeEngineMove()
-  };
-
-  onSquareClick = square => {
-    this.setState({
-      squareStyles: { [square]: { backgroundColor: 'Turquoise' } },
-      pieceSquare: square
-    });
-
-    let move = this.game.move({
-      from: this.state.pieceSquare,
-      to: square,
-      promotion: 'q'
-    });
-
-    // illegal move
-    if (move === null) return;
-
-    this.setState({ fen: this.game.fen() });
-    this.makeEngineMove()
-  };
-
-  makeEngineMove = () => {
-    axios.post('/move', { fen: this.game.fen()})
-    .then((res) => {
-      if (res.data === "None")
-      {
-        console.log('No legal moves.')
-        return;
-      }
-
-      // Setting sloppy to true allows it to parse cheap blue's non standard move notation.
-      this.game.move(res.data, {sloppy: true});
-      this.setState({ fen: this.game.fen() });
-    })
-    .catch((err) => console.log(err));
-  }
-
-  takeBack = () => {
-    let move = this.game.undo();
-    if (move === null) return;
-
-    this.setState({ fen: this.game.fen() });
-  }
-
-  pickSide = (color) => {
-    this.setState({side: color});
-  }
-
-  getFenFromChild = (fen) => {
-    const test = this.game.validate_fen(fen)
-    if (test.valid)
-    {
-      this.game.load(fen)
-      this.setState({ fen: this.game.fen() })
-    }
-    else
-      console.log(test.error)
-  }
-
-  getFen = () => {
-    return this.game.fen();
-  }
-
-  render() {
-    const { fen, squareStyles, side} = this.state;
-    return this.props.children({
-      makeEngineMove: this.makeEngineMove,
-      position: fen,
-      onDrop: this.onDrop,
-      onSquareClick: this.onSquareClick,
-      squareStyles,
-      takeBack: this.takeBack,
-      pickSide: this.pickSide,
-      passFenUp: this.getFenFromChild,
-      side: side
-    });
-  }
-}
-
-
-// Component for adding a player and generating a token for them.
-const GenToken = () => {
-  const [name, setName] = useState('')
-  const [token, setToken] = useState(null)
-
-  const addPlayer = () => {
-    axios.post('/addplayer', {name: name})
-    .then((res) => {
-      setToken(res.data)
-    })
-    .catch((err) => {
-      console.log(err)
-    })
-  }
-  
+export default function App() {
   return (
-    <div>
-      <textarea value={name} onChange={(e) => {setName(e.target.value)}}/>
-      <br/>
-      {token && <p>Token = {token}</p>}
-      <button onClick={addPlayer}>Get Token</button>
-    </div>
-  )
-}
-
-const FenBox = ({fen, passFenUp}) => {
-
-  const [fenString, setFenString] = useState(fen)
-
-
-  // Because fen never changes after component is created this effect is only performed once.
-  useEffect(() => setFenString(fen), [fen])
-
-  const loadFen = () => {
-    passFenUp(fenString)
-  }
-
-  return (
-    <div>
-      <textarea cols={fenString.length + 1} value={fenString} onChange={(e) => {setFenString(e.target.value)}}/>
-      <br/>
-      <button onClick={loadFen}>Load FEN</button>
-    </div>
-  )
-}
-
-
-const NormalGameBoard = ({admin}) => {
-
-  return (
-    <NormalGame>
-        {({ makeEngineMove, position, onDrop, onSquareClick, squareStyles, takeBack, pickSide, passFenUp, side }) => (
-          <div>
-            <Button onClick={takeBack}> Take Back </Button>
-            {admin && <Button onClick={makeEngineMove}> Engine Move </Button>}
-            <PlayAsButton onClick={() => pickSide('white')}>Play White</PlayAsButton>
-            <PlayAsButton onClick={() => pickSide('black')} black>Play Black</PlayAsButton>
-            <Chessboard
-            calcWidth={({ screenWidth }) => (screenWidth < 500 ? 350 : 480)}
-            id="normalGame"
-            position={position}
-            onDrop={onDrop}
-            boardStyle={{
-              borderRadius: '5px',
-              boxShadow: `0 5px 15px rgba(0, 0, 0, 0.5)`
-            }}
-            // roughSquare={roughSquare}
-            onSquareClick={onSquareClick}
-            squareStyles={squareStyles}
-            lightSquareStyle={{ backgroundColor: "Cornsilk" }}
-            darkSquareStyle={{ backgroundColor: "RoyalBlue" }}
-            orientation={side}
-            />
-            <br/>
-            {admin &&
-              <div>
-                <GenToken/>
-                <FenBox fen={position} passFenUp={passFenUp}/>
-                <PerftUtil fen={position}/>
-              </div>
-            }
-          </div>
-        )}
-      </NormalGame>
-  )
-}
-
-function App() {
-  return (
-    <div className="App">
-        <NormalGameBoard admin/>
-    </div>
+    <ProvideAuth>
+      <Router>
+        <div>
+          <Navbar />
+          <Switch>
+            <Route path="/about">
+              <AboutPage />
+            </Route> 
+            <Route path="/login">
+              <LoginPage />
+            </Route>
+            <PrivateRoute path="/play">
+              <PlayPage />
+            </PrivateRoute>
+          </Switch>
+        </div>
+      </Router>
+    </ProvideAuth>
   );
 }
 
-export default App;
+// A wrapper for <Route> that redirects to the login
+// screen if you're not yet authenticated.
+function PrivateRoute({ children, ...rest }) {
+  let auth = useAuth()
+  return (
+    <Route
+      {...rest}
+      render={({ location }) =>
+        auth.session ? (
+          children
+        ) : (
+          <Redirect
+            to={{
+              pathname: "/login",
+              state: { from: location }
+            }}
+          />
+        )
+      }
+    />
+  );
+}
+
+function AboutPage() {
+  return (
+    <div>
+      <h3>About</h3>
+      <p>Cheap Blue is a chess engine that I made from scratch.
+        The name plays off the name of the first chess engine to defeat
+        a world champion, Deep Blue. It may not be able to beat
+        Garry Kasparov (yet), but it is decent and beats me most
+        of the time.
+      </p>
+    </div>
+    
+  )
+}
+
+function PlayPage() {
+  const auth = useAuth()
+  return auth.session.game ? (
+    <Game isAdmin={false}/>
+  ) : (
+    <GameConfig />
+  )
+}
+
+const LoginBox = ({login, adduser}) => {
+
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
+
+  return (
+    <div className="loginBox">
+      <label>
+        Username
+        <input type="text" onChange={(e) => setUsername(e.target.value)}/>
+      </label>
+      <br/>
+      <label>
+        Password
+        <input type="password" onChange={(e) => setPassword(e.target.value)}/>
+      </label>
+      <br/>
+      <p style={{color: 'red'}}>{error}</p>
+      <button onClick={() => login(username, password, (err) => setError(err))}>Log in</button>
+      <button onClick={() => adduser(username, password, (err) => setError(err))}>New user</button>
+    </div>
+  )
+}
+
+function LoginPage() {
+  const history = useHistory()
+  const location = useLocation()
+  const auth = useAuth()
+
+  const { from } = location.state || { from: { pathname: "/" } }
+
+  const cb = () => {
+    history.replace(from)
+  }
+
+  const login = (uname, pass, errorCB) => {
+    return auth.login(uname, pass, cb, errorCB)
+  }
+
+  const adduser = (uname, pass, errorCB) => {
+    auth.adduser(uname, pass, cb, errorCB)
+  }
+
+  return (
+    <div>
+      <h3> Log In </h3>
+      <p>You need to log in to play against the engine because
+         computation is done on the server side and I would rather
+          not let some anonymous visitor, possibly russian or chinese bot, 
+          spam the engine with requests and then get a big bill 
+          from Jeff Bezos because I made his servers work too hard.
+          Also I went through the trouble of adding a database and user
+          authentication which was just a joy and definitely not a shit show.
+          So please enjoy the fruits of my labor
+          and be sure to make up a funny username and a password that ends 
+          with 69 ;)
+      </p>
+      <LoginBox login={login} adduser={adduser}/>
+    </div>
+  )
+}

@@ -2,22 +2,21 @@ const express = require('express')
 const cors = require('cors')
 const app = express()
 
-require('dotenv').config();
-
 const util = require('util')
 const execFile = util.promisify(require('child_process').execFile)
 
-const { Pool } = require('pg')
-const pool = new Pool({
-  user: 'duncan',
-  host: 'postgres',
-  database: 'cheap_blue_db',
-  password: 'asdf',
-  port: 5432,
-})
+const {
+  sessionPool,
+  addUser,
+  updateUserSession,
+  fetchUser,
+  fetchAllUsers,
+  addGame
+} = require('./db')
 
 const session = require('express-session')
-const crypto = require('crypto')
+const sessionStore = require('connect-pg-simple')(session)
+
 const bcrypt = require('bcryptjs')
 const saltRounds = 10;
 
@@ -26,40 +25,90 @@ const port = 4000
 app.use(cors())
 app.use(express.json())
 app.use(session({
-  secret: process.env.SECRET,
+  store: new sessionStore({
+    pool: sessionPool
+  }),
+  secret: 'krabby patty secret formula',
   saveUninitialized: false,
   resave: false,
   cookie: {
     httpOnly: true,
-    maxAge: parseInt(process.env.MAX_AGE)
+    maxAge: (1000 * 60 * 60 * 24) // 1 days worth of milliseconds
   }
 }))
 
-app.get('/', (req, res) => {
-  pool.query('SELECT * FROM players', (err, qRes) => {
-    res.json(qRes.rows)
-  })
+app.get('/', async (req, res) => {
+  const rows = await fetchAllUsers()
+  res.json(rows)
+})
+
+app.post('/syncsession', (req, res) => {
+  req.session.data = req.body.session_data
+  res.send({success: true, message: "Session synchronized with server"})
 })
 
 app.post('/move', (req, res) => {
   execFile('./cheap-blue/bin/main', ['-m', req.body.fen])
   .then(({stdout}) => {
-    console.log(stdout)
-    res.send(stdout)
+    if (stdout === "None")
+      res.send({success: false, message: 'No legal moves'})
+    else
+      res.send({success: true, move: stdout, message: 'Engine move'})
   })
   .catch((err) => console.log(err));
 })
 
-app.post('/addplayer', (req, res) => {
-  const querytext = 'INSERT INTO players (player_name, player_token) VALUES ($1, $2)'
-  const token = crypto.randomBytes(10).toString('hex')
+app.post('/adduser', async (req, res) => {
+  const user = await fetchUser(req.body.uname)
+  if (user) {
+    res.send({success: false, message: "User already exists"})
+  }
+  else {
+    const hash = await bcrypt.hash(req.body.pass, saltRounds)
+    await addUser(req.body.uname, hash)
+    const newUser = await fetchUser(req.body.uname)
+    req.session.data = {uid: newUser.id, uname: newUser.uname}
+    res.send({success: true, data: req.session.data, message: "User added"})
+  }
+})
 
-  bcrypt.genSalt(saltRounds, (err, salt) => {
-    bcrypt.hash(token, salt, (err, hash) => {
-      pool.query(querytext, [req.body.name, hash])
-      res.send(token)
-    });
-  });
+app.post('/login', async (req, res) => {
+  const user = await fetchUser(req.body.uname)
+  if (user) {
+    bcrypt.compare(req.body.pass, user.pw_hash)
+    .then((result) => {
+      if (result) {
+        // Session data is null the first time logging in with one of the default users.
+        const sd = user.session_data || {uid: user.id, uname: user.uname}
+        req.session.data = sd
+        res.send({success: true, data: sd, message: "Login successful"})
+      }
+      else 
+        res.send({success: false, message: "Incorrect password"})
+    })
+    .catch((err) => console.log(err))
+  }
+  else
+    res.send({success: false, message: "User does not exist"})
+})
+
+app.post('/logout', (req, res) => {
+  // Save session to db
+  updateUserSession(req.session.data.uid, req.body.session_data)
+  req.session.data = null
+  res.send({success: true, message: "Logout successful"})
+})
+
+app.post('/getsession', async (req, res) => {
+  if (req.session.data)
+    res.send({success: true, data: req.session.data, message: 'User session loaded'})
+  else
+    res.send({success: false, message: 'No user session'})
+})
+
+app.post('/addgame', (req, res) => {
+  addGame(req.body.values)
+  res.send({success: true, message: "Game added"})
 })
 
 const parsePerftOutput = (output) => {

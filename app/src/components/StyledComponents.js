@@ -18,7 +18,8 @@ const PlayAsButton = styled(Button)`
 `;
 
 const TomatoButton = styled(Button)`
-  color: tomato;
+  color: black;
+  background: tomato;
   border-color: tomato;
 `;
 
