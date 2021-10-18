@@ -24,4 +24,4 @@ yarn-error.log*
 
 # stores secret connection info
 # Uncomment and change secrets before deploying
-#/secrets
+/secrets

@@ -1,4 +1,4 @@
-version: "3.3"
+version: "3.9"
 services:
   cb-app:
     container_name: cb-app
@@ -9,7 +9,9 @@ services:
     links:
       - "cb-server:engine"
     ports:
-      - "80:3000"
+      - "3000:3000"
+    volumes:
+      - /home/duncanfish/git/cheap-blue-app/app/src:/app/src
   
   cb-server:
     container_name: cb-server
@@ -39,6 +41,16 @@ services:
       - ./sql/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
       - ./server/node_modules/connect-pg-simple/table.sql:/docker-entrypoint-initdb.d/table.sql
       - ./secrets/postgres-password:/secrets/postgres-password
+
+  pgadmin:
+    container_name: pgadmin4
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: asdf
+    ports:
+      - "5050:80"
   
 volumes:
   postgres-data:

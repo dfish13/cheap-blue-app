@@ -9,38 +9,43 @@ import {
   useLocation
 } from "react-router-dom";
 
-import Navbar from "./components/NavBar";
-
 import Game from './Game.js'
 import GameConfig from "./components/GameConfig"
 
 import { ProvideAuth, useAuth } from './hooks/useAuth'
+import NavBar from "./components/NavBar";
+import { LoginDialog } from "./components/Dialogs";
+import theme from "./theme.js"
+
+import { ThemeProvider } from "@mui/material";
 
 export default function App() {
   return (
-    <ProvideAuth>
-      <Router>
-        <div>
-          <Navbar />
-          <Switch>
-            <Route path="/about">
-              <AboutPage />
-            </Route> 
-            <Route path="/login">
-              <LoginPage />
-            </Route>
-            <PrivateRoute path="/play">
-              <PlayPage />
-            </PrivateRoute>
-          </Switch>
-        </div>
-      </Router>
-    </ProvideAuth>
+    <ThemeProvider theme={theme}>
+      <ProvideAuth>
+        <Router>
+          <div>
+            <NavBar />
+            <Switch>
+              <Route path="/about">
+                <AboutPage />
+              </Route> 
+              <Route path="/login">
+                <LoginPage />
+              </Route>
+              <Route path="/play">
+                <PPlayPage />
+              </Route>
+            </Switch>
+          </div>
+        </Router>
+      </ProvideAuth>
+    </ThemeProvider>
   );
 }
 
-// A wrapper for <Route> that redirects to the login
-// screen if you're not yet authenticated.
+// A wrapper for <Route> that opens a login
+// dialog if you're not yet authenticated.
 function PrivateRoute({ children, ...rest }) {
   let auth = useAuth()
   return (
@@ -60,6 +65,35 @@ function PrivateRoute({ children, ...rest }) {
       }
     />
   );
+}
+
+
+// A wrapper for a page that opens a login
+// dialog if you're not yet authenticated.
+function PrivatePage({ children }) {
+  
+  const history = useHistory()
+  const location = useLocation()
+  const auth = useAuth()
+
+  const { from } = location.state || { from: { pathname: "/" } }
+
+  const cb = () => {
+    history.replace(from)
+  }
+
+  const close = () => {
+    cb()
+  }
+
+  return auth.session ? (
+    children
+  ) : (
+    <LoginDialog
+      open={true}
+      handleClose={close}
+    />
+  )
 }
 
 function AboutPage() {
@@ -83,6 +117,14 @@ function PlayPage() {
     <Game isAdmin={false}/>
   ) : (
     <GameConfig />
+  )
+}
+
+function PPlayPage() {
+  return (
+    <PrivatePage>
+      <PlayPage />
+    </PrivatePage>
   )
 }
 

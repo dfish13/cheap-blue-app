@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS games (
     id SERIAL,
     user_id INT NOT NULL,
     user_color CHAR(5) NOT NULL,
+    engine_config JSON,
     pgn TEXT,
     result CHAR(4),
     PRIMARY KEY (id),

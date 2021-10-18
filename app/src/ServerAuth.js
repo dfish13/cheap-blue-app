@@ -39,7 +39,7 @@ const ServerAuth = {
           cb(res.data.data)
         }
         else
-          errorCB(res.data.message)
+          errorCB(res.data)
       })
     },
 
@@ -66,7 +66,7 @@ const ServerAuth = {
           cb(res.data.data)
         }
         else
-          errorCB(res.data.message)
+          errorCB(res.data)
       })
     },
 

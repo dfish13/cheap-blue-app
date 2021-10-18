@@ -73,9 +73,17 @@ const MyGame = () => {
     if (result !== 'dnf')
       setTimeout(setResultDialog, 1000, [true, result])
 
+
+    const engine_config = {
+      thinkingTime: auth.session.game.thinkingTime,
+      killerMove: auth.session.game.killerMove,
+      pvSort: auth.session.game.pvSort
+    }
+
     const values = [
       auth.session.uid,
       auth.session.game.isBlack ? 'black' : 'white',
+      engine_config,
       auth.session.game.pgn,
       result
     ]

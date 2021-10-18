@@ -61,7 +61,7 @@ app.post('/move', (req, res) => {
 app.post('/adduser', async (req, res) => {
   const user = await fetchUser(req.body.uname)
   if (user) {
-    res.send({success: false, message: "User already exists"})
+    res.send({success: false, field: "uname", message: "User already exists"})
   }
   else {
     const hash = await bcrypt.hash(req.body.pass, saltRounds)
@@ -84,12 +84,12 @@ app.post('/login', async (req, res) => {
         res.send({success: true, data: sd, message: "Login successful"})
       }
       else 
-        res.send({success: false, message: "Incorrect password"})
+        res.send({success: false, field: "pass", message: "Incorrect password"})
     })
     .catch((err) => console.log(err))
   }
   else
-    res.send({success: false, message: "User does not exist"})
+    res.send({success: false, field: "uname", message: "User does not exist"})
 })
 
 app.post('/logout', (req, res) => {

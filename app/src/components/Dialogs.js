@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -6,6 +6,96 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
+import { useAuth } from '../hooks/useAuth';
+import { Typography } from '@mui/material';
+
+export const LoginDialog = ({open, handleClose}) => {
+
+  const auth = useAuth()
+
+  const [uname, setUname] = useState('')
+  const [pass, setPass] = useState('')
+  
+  const [unameHelpText, setUnameHelpText] = useState('')
+  const [passHelpText, setPassHelpText] = useState('')
+
+  const cb = () => {
+    clearText()
+    handleClose()
+  }
+
+  const handleLogin = () => {
+    auth.login(uname, pass, cb, handleError)
+  }
+
+  const handleNewUser = () => {
+    auth.adduser(uname, pass, cb, handleError)
+  }
+
+  const clearHelpText = () => {
+    setUnameHelpText('')
+    setPassHelpText('')
+  }
+
+  const clearText = () => {
+    clearHelpText()
+    setUname('')
+    setPass('')
+  }
+
+  const handleError = (data) => {
+    clearHelpText()
+    if (data.field == "uname")
+      setUnameHelpText(data.message)
+    else
+      setPassHelpText(data.message)
+  }
+
+  const close = () => {
+    clearText()
+    handleClose()
+  }
+
+  return (
+    <Dialog open={open} onClose={close}>
+      <DialogTitle>
+        <Typography>Login</Typography>
+      </DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          If you do not already have an account make up a fun username and
+          a secure password (I am actually storing hashed passwords on the
+          database so feel free to make it something embarrassing like
+          iPlayD4onMove1) and choose signup.
+        </DialogContentText>
+        <TextField
+          autoFocus
+          error={Boolean(unameHelpText)}
+          value={uname}
+          onChange={(e) => setUname(e.target.value)}
+          id="username"
+          label="Username"
+          type="text"
+          helperText={unameHelpText}
+        />
+        <TextField
+          error={Boolean(passHelpText)}
+          value={pass}
+          onChange={(e) => setPass(e.target.value)}
+          id="password"
+          label="Password"
+          type="password"
+          helperText={passHelpText}
+          autoComplete="current-password"
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleLogin}>Login</Button>
+        <Button onClick={handleNewUser}>Signup</Button>
+      </DialogActions>
+    </Dialog>
+  )
+}
 
 export const ExitDialog = ({open, handleClose, handleExit}) => {
 
@@ -72,43 +162,5 @@ export const ResultDialog = ({open, result, handleClose}) => {
           <Button onClick={handleClose}>Close</Button>
         </DialogActions>
       </Dialog>
-  )
-}
-
-
-export const LoginDialog = () => {
-  return (
-    <div>
-      <Dialog open={true} onClose={() => console.log('close')}>
-        <DialogTitle>Login</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            You need to log in to play against the engine because
-            computation is done on the server side and I would rather
-            not let some anonymous visitor, possibly russian or chinese bot, 
-            spam the engine with requests and then get a big bill 
-            from Jeff Bezos because I made his servers work too hard.
-            Also I went through the trouble of adding a database and user
-            authentication which was just a joy and definitely not a shit show.
-            So please enjoy the fruits of my labor
-            and be sure to make up a funny username and a password that ends 
-            with 69 ;)
-          </DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Email Address"
-            type="email"
-            fullWidth
-            variant="standard"
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => console.log('close')}>Cancel</Button>
-          
-        </DialogActions>
-      </Dialog>
-    </div>
   )
 }

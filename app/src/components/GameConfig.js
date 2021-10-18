@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
 
 import { alpha, styled } from '@mui/material/styles';
@@ -13,7 +13,6 @@ import Switch from '@mui/material/Switch';
 import Button from '@mui/material/Button';
 import Slider from '@mui/material/Slider';
 import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
 
 
 const SideSwitch = styled(Switch)(({ theme }) => ({
