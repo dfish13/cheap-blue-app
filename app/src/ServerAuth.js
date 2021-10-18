@@ -18,16 +18,29 @@ const ServerAuth = {
       })
     },
 
-    async login(uname, pass, cb, errorCB) {
-      const res = await axios.post('/login', {uname: uname, pass: pass})
-      console.log(res.data.message)
-      if (res.data.success)
-      {
-        ServerAuth.isAuthenticated = true
-        cb(res.data.data)
-      }
-      else
-        errorCB(res.data.message)
+    move(fen, cb) {
+      axios.post('/move', { fen: fen })
+      .then((res) => {
+        cb(res)
+      })
+    },
+
+    addgame(values) {
+      axios.post('/addgame', {values: values})
+    },
+
+    login(uname, pass, cb, errorCB) {
+      axios.post('/login', {uname: uname, pass: pass})
+      .then((res) => {
+        console.log(res.data.message)
+        if (res.data.success)
+        {
+          ServerAuth.isAuthenticated = true
+          cb(res.data.data)
+        }
+        else
+          errorCB(res.data.message)
+      })
     },
 
     logout(s, cb) {

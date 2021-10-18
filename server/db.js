@@ -66,7 +66,7 @@ const fetchUserById = async (uid) => {
 const addGame = async (values) => {
   const query = {
     name: 'add-game',
-    text: 'INSERT INTO games (user_id, user_color, pgn, result) VALUES ($1, $2, $3, $4)',
+    text: 'INSERT INTO games (user_id, user_color, engine_config, pgn, result) VALUES ($1, $2, $3, $4, $5)',
     values: values
   }
   await pool.query(query)
