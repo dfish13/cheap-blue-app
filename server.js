@@ -135,6 +135,13 @@ app.post('/perft', (req, res) => {
   .catch((err) => console.log(err))
 })
 
+if (process.env.BUILD) {
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client/build/index.html'))
+  })
+}
+
+
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 })
