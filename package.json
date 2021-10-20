@@ -5,7 +5,9 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "nodemon --ignore client/ server.js",
+    "db": "docker-compose run -d --service-ports --name postgres db",
+    "pgadmin": "docker-compose run -d --service-ports --name pgadmin pgadmin"
   },
   "author": "Duncan Fisher",
   "license": "ISC",

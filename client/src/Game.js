@@ -6,11 +6,13 @@ import {TomatoButton } from './components/StyledComponents';
 import { useAuth } from './hooks/useAuth';
 import ServerAuth from './ServerAuth';
 import { ExitDialog, ResultDialog } from './components/Dialogs';
+import { makePGN } from './components/GameConfig';
 
 const MyGame = () => {
 
   const auth = useAuth()
   const game = useRef(new Chess())
+  const thinking = useRef(new Boolean())
   const [fen, setFen] = useState(null)
   const [selectedSquare, setSelectedSquare] = useState('')
   const [squareStyles, setSquareStyles] = useState({})
@@ -21,6 +23,7 @@ const MyGame = () => {
   useEffect(() => {
     // Init game on mount
     game.current.load_pgn(auth.session.game.pgn, {sloppy: true} )
+    thinking.current = false
     setFen(game.current.fen()) 
   }, [])
 
@@ -35,14 +38,18 @@ const MyGame = () => {
       to: targetSquare,
       promotion: 'q'
     }
-    makeMove(move)
+    console.log('thinking', thinking.current)
+    if (!thinking.current)
+      makeMove(move)
   }
 
   const makeEngineMove = () => {
+    thinking.current = true
     ServerAuth.move(fen, (res) => {
       console.log(res.data.message)
       if (res.data.success)
         makeMove(res.data.move)
+      thinking.current = false
     })
   }
 
@@ -84,7 +91,7 @@ const MyGame = () => {
       auth.session.uid,
       auth.session.game.isBlack ? 'black' : 'white',
       engine_config,
-      auth.session.game.pgn,
+      makePGN(auth.session.game.pgnHeader, game.current.pgn()),
       result
     ]
 
@@ -102,7 +109,8 @@ const MyGame = () => {
       to: square,
       promotion: 'q'
     }
-    makeMove(move)
+    if (!thinking.current)
+      makeMove(move)
     setSelectedSquare(square)
   }
 

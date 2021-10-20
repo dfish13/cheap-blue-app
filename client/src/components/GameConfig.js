@@ -8,11 +8,11 @@ import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import FormHelperText from '@mui/material/FormHelperText';
 import Switch from '@mui/material/Switch';
 import Button from '@mui/material/Button';
 import Slider from '@mui/material/Slider';
 import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
 
 const SideSwitch = styled(Switch)(({ theme }) => ({
@@ -29,25 +29,24 @@ const SideSwitch = styled(Switch)(({ theme }) => ({
 
 const GameConfig = () => {
 
-    const [options, setOptions] = useState({
+    const [config, setConfig] = useState({
         thinkingTime: 3,
         pvSort: true,
-        killerMove: true,
         isBlack: false,
     })
 
     const auth = useAuth()
 
     const handleSwitch = (e) => {
-        setOptions({
-            ...options,
+        setConfig({
+            ...config,
             [e.target.name]: e.target.checked
         })
     }
 
     const handleSlider = (e, newT) => {
-        setOptions({
-            ...options,
+        setConfig({
+            ...config,
             thinkingTime: newT
         })
     }
@@ -60,18 +59,20 @@ const GameConfig = () => {
     }
 
     const save = () => {
-        const pgn = [
-            '[Event "Casual Game on Cheap Blue App"]',
+        const pgnHeader = [
+            '[Event "Casual game on Cheap Blue App"]',
             `[Date "${(new Date()).toDateString()}"]`,
-            `[White "${options.isBlack ? auth.session.uname : "Cheap Blue"}"]`,
-            `[Black "${options.isBlack ? "Cheap Blue" : auth.session.uname}"]`,
-            '[PlyCount "0"]',
+            `[White "${config.isBlack ? auth.session.uname : "Cheap Blue"}"]`,
+            `[Black "${config.isBlack ? "Cheap Blue" : auth.session.uname}"]`,
+            `[pvSort "${config.pvSort ? "On" : "Off"}"]`,
+            `[thinkingTime "${timeFormat(config.thinkingTime)}"]`,
             ''
         ]
         
         auth.saveGameConfig({
-            ...options,
-            pgn: pgn.join('\n')
+            ...config,
+            pgnHeader: pgnHeader,
+            pgn: ''
         })
     }
 
@@ -81,17 +82,16 @@ const GameConfig = () => {
                 <FormLabel component="legend">Game Config</FormLabel>
                 <FormGroup>
                     <FormControlLabel
-                        control={ <SideSwitch checked={options.isBlack} onChange={handleSwitch} name="isBlack" /> }
+                        control={ <SideSwitch checked={config.isBlack} onChange={handleSwitch} name="isBlack" /> }
                         label="Choose side"
                     />
                     <FormControlLabel
-                        control={ <Switch checked={options.pvSort} onChange={handleSwitch} name="pvSort" /> }
-                        label="Sort moves by principle variation"
+                        control={ <Switch checked={config.pvSort} onChange={handleSwitch} name="pvSort" /> }
+                        label="PV Sort (Increases playing strength)"
                     />
-                    <FormControlLabel
-                        control={ <Switch checked={options.killerMove} onChange={handleSwitch} name="killerMove" /> }
-                        label="Use killer move heuristic"
-                    />
+                    <Typography id="input-slider" gutterBottom>
+                        Thinking time
+                    </Typography>
                     <Slider
                         aria-label="Thinking Time"
                         defaultValue={3}
@@ -99,14 +99,18 @@ const GameConfig = () => {
                         valueLabelFormat={timeFormat}
                         getAriaValueText={timeFormat}
                         min={1}
-                        max={8}
+                        max={5}
                         onChange={handleSlider}
                     />
-                    <Button variant="contained" onClick={save}>Play</Button>
+                    <Button variant="outlined" onClick={save}>Play</Button>
                 </FormGroup>
             </FormControl>
         </Box>
     )
+}
+
+export const makePGN = (header, pgn) => {
+    return header.join('\n') + pgn
 }
 
 export default GameConfig
