@@ -10,7 +10,6 @@
 
 # production
 **/build
-docker-compose.deploy.yml
 
 # misc
 .DS_Store
