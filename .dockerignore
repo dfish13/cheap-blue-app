@@ -1,0 +1,12 @@
+.vscode
+client
+secret
+sql
+node_modules
+Dockerfile
+docker-compose*.yml
+README.md
+.dockerignore
+
+# Allow client/build
+!client/build/*
