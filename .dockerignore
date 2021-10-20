@@ -1,6 +1,6 @@
 .vscode
 client
-secret
+secrets
 sql
 node_modules
 Dockerfile
