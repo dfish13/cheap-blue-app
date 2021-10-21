@@ -47,7 +47,15 @@ app.post('/syncsession', (req, res) => {
 })
 
 app.post('/move', (req, res) => {
-  execFile('./cheap-blue/bin/main', ['-m', req.body.fen])
+  
+  const args = [
+    '-m',
+    req.body.thinkingTime,
+    req.body.pvSort,
+    req.body.fen
+  ]
+
+  execFile('./cheap-blue/bin/main', args)
   .then(({stdout}) => {
     if (stdout === "None")
       res.send({success: false, message: 'No legal moves'})

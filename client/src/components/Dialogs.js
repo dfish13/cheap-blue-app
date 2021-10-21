@@ -8,8 +8,9 @@ import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 import { useAuth } from '../hooks/useAuth';
 import { Typography } from '@mui/material';
+import Stack from '@mui/material/Stack';
 
-export const LoginDialog = ({open, handleClose}) => {
+export const LoginDialog = ({open, handleClose, loginCB}) => {
 
   const auth = useAuth()
 
@@ -21,7 +22,7 @@ export const LoginDialog = ({open, handleClose}) => {
 
   const cb = () => {
     clearText()
-    handleClose()
+    loginCB()
   }
 
   const handleLogin = () => {
@@ -64,33 +65,37 @@ export const LoginDialog = ({open, handleClose}) => {
       <DialogContent>
         <DialogContentText>
           If you do not already have an account make up a fun username and
-          a secure password (I am actually storing hashed passwords on the
+          a secure password (passwords are hashed before they are stored on the
           database so feel free to make it something embarrassing like
           iPlayD4onMove1) and choose signup.
         </DialogContentText>
-        <TextField
-          autoFocus
-          error={Boolean(unameHelpText)}
-          value={uname}
-          onChange={(e) => setUname(e.target.value)}
-          id="username"
-          label="Username"
-          type="text"
-          helperText={unameHelpText}
-        />
-        <TextField
-          error={Boolean(passHelpText)}
-          value={pass}
-          onChange={(e) => setPass(e.target.value)}
-          id="password"
-          label="Password"
-          type="password"
-          helperText={passHelpText}
-          autoComplete="current-password"
-        />
+        <Stack padding={1} direction="column">
+          <TextField
+            autoFocus
+            sx={{pb: 2}}
+            error={Boolean(unameHelpText)}
+            value={uname}
+            onChange={(e) => setUname(e.target.value)}
+            id="username"
+            label="Username"
+            type="text"
+            helperText={unameHelpText}
+          />
+          <TextField
+            error={Boolean(passHelpText)}
+            value={pass}
+            onChange={(e) => setPass(e.target.value)}
+            id="password"
+            label="Password"
+            type="password"
+            helperText={passHelpText}
+            autoComplete="current-password"
+          />
+        </Stack>
+        
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleLogin}>Login</Button>
+        <Button variant="contained" onClick={handleLogin}>Login</Button>
         <Button onClick={handleNewUser}>Signup</Button>
       </DialogActions>
     </Dialog>
@@ -115,7 +120,32 @@ export const ExitDialog = ({open, handleClose, handleExit}) => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleExit}>Exit</Button>
+          <Button variant="contained" onClick={handleExit}>Exit</Button>
+          <Button onClick={handleClose}>Cancel</Button>
+        </DialogActions>
+      </Dialog>
+  )
+}
+
+export const ResignDialog = ({open, handleClose, handleResign}) => {
+
+  return (
+    <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          Resign?
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Never give up. Unless its mate in 1.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="contained" onClick={handleResign}>Resign</Button>
           <Button onClick={handleClose}>Cancel</Button>
         </DialogActions>
       </Dialog>
@@ -159,7 +189,7 @@ export const ResultDialog = ({open, result, handleClose}) => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Close</Button>
+          <Button variant="contained" onClick={handleClose}>Close</Button>
         </DialogActions>
       </Dialog>
   )

@@ -1,7 +1,7 @@
 .vscode
 .git*
 client
-#secrets
+secrets
 sql
 node_modules
 Dockerfile

@@ -30,10 +30,11 @@ const SideSwitch = styled(Switch)(({ theme }) => ({
 const GameConfig = () => {
 
     const [config, setConfig] = useState({
-        thinkingTime: 3,
         pvSort: true,
         isBlack: false,
     })
+
+    const [thinkingTime, setThinkingTime] = useState(3)
 
     const auth = useAuth()
 
@@ -45,10 +46,8 @@ const GameConfig = () => {
     }
 
     const handleSlider = (e, newT) => {
-        setConfig({
-            ...config,
-            thinkingTime: newT
-        })
+        const t = Math.max(1, newT)
+        setThinkingTime(t)
     }
 
     const timeFormat = (t) => {
@@ -71,13 +70,14 @@ const GameConfig = () => {
         
         auth.saveGameConfig({
             ...config,
+            thinkingTime: thinkingTime,
             pgnHeader: pgnHeader,
             pgn: ''
         })
     }
 
     return (
-        <Box>
+        <Box sx={{p: 2}}>
             <FormControl component="fieldset" variant="standard">
                 <FormLabel component="legend">Game Config</FormLabel>
                 <FormGroup>
@@ -94,15 +94,15 @@ const GameConfig = () => {
                     </Typography>
                     <Slider
                         aria-label="Thinking Time"
-                        defaultValue={3}
+                        value={thinkingTime}
                         valueLabelDisplay="auto"
                         valueLabelFormat={timeFormat}
                         getAriaValueText={timeFormat}
-                        min={1}
+                        min={0}
                         max={5}
                         onChange={handleSlider}
                     />
-                    <Button variant="outlined" onClick={save}>Play</Button>
+                    <Button variant="contained" onClick={save}>Play</Button>
                 </FormGroup>
             </FormControl>
         </Box>

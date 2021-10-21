@@ -2,22 +2,26 @@ import Chessboard from 'chessboardjsx';
 import Chess from 'chess.js';
 import {useEffect, useState, useRef } from 'react';
 
-import {TomatoButton } from './components/StyledComponents';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import Box from '@mui/material/Box';
+
 import { useAuth } from './hooks/useAuth';
 import ServerAuth from './ServerAuth';
-import { ExitDialog, ResultDialog } from './components/Dialogs';
+import { ExitDialog, ResignDialog, ResultDialog } from './components/Dialogs';
 import { makePGN } from './components/GameConfig';
 
 const MyGame = () => {
 
   const auth = useAuth()
   const game = useRef(new Chess())
-  const thinking = useRef(new Boolean())
+  const thinking = useRef(Boolean())
   const [fen, setFen] = useState(null)
   const [selectedSquare, setSelectedSquare] = useState('')
   const [squareStyles, setSquareStyles] = useState({})
   const [resultDialog, setResultDialog] = useState([false, 'dnf'])
   const [exitDialog, setExitDialog] = useState(false)
+  const [resignDialog, setResignDialog] = useState(false)
   const computerSide = auth.session.game.isBlack ? 'w' : 'b'
 
   useEffect(() => {
@@ -38,14 +42,20 @@ const MyGame = () => {
       to: targetSquare,
       promotion: 'q'
     }
-    console.log('thinking', thinking.current)
+
     if (!thinking.current)
       makeMove(move)
   }
 
   const makeEngineMove = () => {
     thinking.current = true
-    ServerAuth.move(fen, (res) => {
+    const body = {
+      thinkingTime: auth.session.game.thinkingTime.toString(),
+      pvSort: auth.session.game.pvSort ? "1" : "0",
+      fen: fen
+    }
+
+    ServerAuth.move(body, (res) => {
       console.log(res.data.message)
       if (res.data.success)
         makeMove(res.data.move)
@@ -70,14 +80,14 @@ const MyGame = () => {
       endGame()
   }
 
-  const endGame = () => {
-    let result = 'dnf'
+  const endGame = (res) => {
+    let result = res || 'dnf'
     if (game.current.in_checkmate())
       result = (game.current.turn() ==  computerSide) ? 'win' : 'loss'
     else if (game.current.in_draw())
       result = 'draw'
     
-    if (result !== 'dnf')
+    if (result !== 'dnf' && result !== 'rsgn')
       setTimeout(setResultDialog, 1000, [true, result])
 
 
@@ -116,6 +126,7 @@ const MyGame = () => {
 
   const handleCloseResultDialog = () => {
     setResultDialog([false, 'dnf'])
+    auth.saveGameConfig(null)
   }
 
   const handleExit = () => {
@@ -124,31 +135,46 @@ const MyGame = () => {
   }
 
   const exit = () => {
-    console.log('exit')
     if (!game.current.game_over())
       setExitDialog(true)
     else
       auth.saveGameConfig(null)
   }
 
+  const handleResign = () => {
+    endGame('rsgn')
+    auth.saveGameConfig(null)
+  }
+
+  const resign = () => {
+    setResignDialog(true)
+  }
+
   return (
     <>
-    <TomatoButton onClick={exit}> Exit </TomatoButton>
-    <Chessboard
-      calcWidth={({ screenWidth }) => (screenWidth < 500 ? 350 : 480)}
-      id="normalGame"
-      position={fen}
-      onDrop={onDrop}
-      boardStyle={{
-        borderRadius: '5px',
-        boxShadow: `0 5px 15px rgba(0, 0, 0, 0.5)`
-      }}
-      onSquareClick={onSquareClick}
-      squareStyles={squareStyles}
-      lightSquareStyle={{ backgroundColor: "Cornsilk" }}
-      darkSquareStyle={{ backgroundColor: "RoyalBlue" }}
-      orientation={auth.session.game.isBlack ? "black" : "white" }
-    />
+    <Stack padding={2} paddingBottom={0} direction="row">
+      <Button variant="contained" onClick={exit}>Exit</Button>
+      <Button onClick={resign}>Resign</Button>
+    </Stack>
+    
+    <Box sx={{p: 2}}>
+      <Chessboard
+        calcWidth={({ screenWidth }) => (screenWidth < 500 ? 350 : 480)}
+        id="normalGame"
+        position={fen}
+        onDrop={onDrop}
+        boardStyle={{
+          borderRadius: '5px',
+          boxShadow: `0 5px 15px rgba(0, 0, 0, 0.5)`
+        }}
+        onSquareClick={onSquareClick}
+        squareStyles={squareStyles}
+        lightSquareStyle={{ backgroundColor: "Cornsilk" }}
+        darkSquareStyle={{ backgroundColor: "RoyalBlue" }}
+        orientation={auth.session.game.isBlack ? "black" : "white" }
+      />
+    </Box>
+    
     <ResultDialog
       open={resultDialog[0]}
       result={resultDialog[1]}
@@ -159,27 +185,12 @@ const MyGame = () => {
       handleClose={() => setExitDialog(false)}
       handleExit={handleExit}
     />
+    <ResignDialog
+      open={resignDialog}
+      handleClose={() => setResignDialog(false)}
+      handleResign={handleResign}
+    />
     </>
-  )
-}
-
-const FenBox = ({fen, passFenUp}) => {
-
-  const [fenString, setFenString] = useState(fen)
-
-  // Because fen never changes after component is created this effect is only performed once.
-  useEffect(() => setFenString(fen), [fen])
-
-  const loadFen = () => {
-    passFenUp(fenString)
-  }
-
-  return (
-    <div>
-      <textarea cols={fenString.length + 1} value={fenString} onChange={(e) => {setFenString(e.target.value)}}/>
-      <br/>
-      <button onClick={loadFen}>Load FEN</button>
-    </div>
   )
 }
 

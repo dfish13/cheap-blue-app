@@ -9,7 +9,6 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
-import { styled } from '@mui/material/styles';
 
 import { 
   AccountCircle,
@@ -56,7 +55,7 @@ export default function NavBar() {
       menuItems.push(<MenuItem>{auth.session.uname}</MenuItem>)
       menuItems.push(
         <MenuItem onClick={handleLogout}>
-          <Logout fontSize="small" />
+          <Logout fontSize="small" sx={{pr: 1}} />
           Logout
         </MenuItem>
       )
@@ -70,7 +69,8 @@ export default function NavBar() {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-          <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
+          <img src={window.location.origin + '/logo64.png'} alt='Logo' />
+          <Typography variant="h4" component="div" sx={{ flexGrow: 1, pl: 2 }}>
             Cheap Blue
           </Typography>
           {(
@@ -127,6 +127,7 @@ export default function NavBar() {
                 open={Boolean(navMenuAnchorEl)}
                 onClose={closeNavMenu}
               >
+                <MenuItem onClick={() => clickNav('/home')}>Home</MenuItem>
                 <MenuItem onClick={() => clickNav('/about')}>About</MenuItem>
                 <MenuItem onClick={() => clickNav('/play')}>Play</MenuItem>
               </Menu>
@@ -137,6 +138,7 @@ export default function NavBar() {
       <LoginDialog
         open={loginDialogOpen}
         handleClose={closeLoginDialog}
+        loginCB={() => setLoginDialogOpen(false)}
       />
     </Box>
   )

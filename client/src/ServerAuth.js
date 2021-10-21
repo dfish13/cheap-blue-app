@@ -18,8 +18,8 @@ const ServerAuth = {
       })
     },
 
-    move(fen, cb) {
-      axios.post('/move', { fen: fen })
+    move(body, cb) {
+      axios.post('/move', body)
       .then((res) => {
         cb(res)
       })
@@ -44,7 +44,6 @@ const ServerAuth = {
     },
 
     logout(s, cb) {
-      console.log(s)
       axios.post('/logout', {session_data: s})
       .then((res) => {
         console.log(res.data.message)

@@ -1,5 +1,5 @@
 import { createTheme } from '@mui/material/styles'
-import { blueGrey, lightGreen } from '@mui/material/colors';
+import { lightGreen } from '@mui/material/colors';
 
 const theme = createTheme({
   palette: {
@@ -10,6 +10,9 @@ const theme = createTheme({
       main: lightGreen[500],
     },
   },
+  typography: {
+    fontFamily: "Ubuntu"
+  }
 })
 
 export default theme
