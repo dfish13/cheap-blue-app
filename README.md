@@ -1,70 +1,92 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+# About
 
-In the project directory, you can run:
 
-### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Check out the deployed app [Cheap Blue](https://duncanfish.co).
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Develop
 
-### `npm test`
+From the root directory, you can use these commands:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```
+npm start
+```
 
-### `npm run build`
+Runs the backend in the development mode.\
+If you edit any code it will automatically restart.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+To launch the Postgres database as a Docker service:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```
+npm run db
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+To launch pgAdmin 4 as a Docker service so you can examine the db as you develop:
 
-### `npm run eject`
+```
+npm run pgadmin
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+To run the client:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```
+cd client
+npm start
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Navigate to the browser at [http://localhost:3000](http://localhost:3000)  to view the app. If you edit any code in the client directory it will restart. You will have to bring up another terminal if you have the backend running in your current one.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+Finally you will have to build the Cheap Blue chess engine from source. Again, this will have to be in a new terminal because you already have two terminals busy running the frontend and backend. Back in the root directory run:
 
-## Learn More
+```
+cd cheap-blue
+make
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+This builds an executable that is run as a subprocess by the server. Now you can finally test the app and even play the engine.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Build
 
-### Code Splitting
+This app is built/deployed as 2 Docker containers:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- ### cb-server
+  Express backend and react frontend wrapped in one service.
+- ### postgres
+  The default Postgres database provided on dockerhub.
 
-### Analyzing the Bundle Size
+To build the project perform the following steps in order.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Navigate to the client directory and create a minified static build:
 
-### Making a Progressive Web App
+```
+cd client
+npm run build
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Go back to the root directory and build cb-server with the following commands:
 
-### Advanced Configuration
+```
+cd ..
+docker build -t duncanfish/cheap-blue:cb-server
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+You probably want to replace the tag with something besides my dockerhub repo.\
+If you do, you will also need to replace the image name for cb-server in docker-compose.yml.
 
-### Deployment
+To start all containers:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+```
+docker-compose up -d
+```
 
-### `npm run build` fails to minify
+And the whole app should be running on your local machine!\
+Go to [http://localhost:4000](http://localhost:4000) to view it :smile:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+## Deploy
+
+Not sure why anyone besides me would want to deploy this project but I will document the process anyway.
+
+

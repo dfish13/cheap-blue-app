@@ -18,6 +18,7 @@ import {
 
 import { useAuth } from '../hooks/useAuth';
 import { LoginDialog } from './Dialogs';
+import { Stack } from '@mui/material';
 
 export default function NavBar() {
   
@@ -69,32 +70,36 @@ export default function NavBar() {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-          <img src={window.location.origin + '/logo64.png'} alt='Logo' />
+          <Box sx={{p: 1}}>
+            <img src={window.location.origin + '/logo64.png'} alt='Logo' />
+          </Box>
           <Typography variant="h4" component="div" sx={{ flexGrow: 1, pl: 2 }}>
             Cheap Blue
           </Typography>
           {(
             <div>
-              <IconButton
-                size="large"
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={(e) => handleMenu(e, setNavMenuAnchorEl)}
-                color="inherit"
-              >
-                <MenuIcon />
-              </IconButton>
-              <IconButton
-                size="large"
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={(e) => handleMenu(e, setAccountMenuAnchorEl)}
-                color="inherit"
-              >
-                <AccountCircle />
-              </IconButton>
+              <Stack direction="row">
+                <IconButton
+                  size="large"
+                  aria-label="account of current user"
+                  aria-controls="menu-appbar"
+                  aria-haspopup="true"
+                  onClick={(e) => handleMenu(e, setNavMenuAnchorEl)}
+                  color="inherit"
+                >
+                  <MenuIcon />
+                </IconButton>
+                <IconButton
+                  size="large"
+                  aria-label="account of current user"
+                  aria-controls="menu-appbar"
+                  aria-haspopup="true"
+                  onClick={(e) => handleMenu(e, setAccountMenuAnchorEl)}
+                  color="inherit"
+                >
+                  <AccountCircle />
+                </IconButton>
+              </Stack>
               <Menu
                 id="account-menu-appbar"
                 anchorEl={accountMenuAnchorEl}
