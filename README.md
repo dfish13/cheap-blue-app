@@ -69,7 +69,7 @@ Go back to the root directory and build cb-server with the following commands:
 
 ```
 cd ..
-docker build -t duncanfish/cheap-blue:cb-server
+docker build -t duncanfish/cheap-blue:cb-server .
 ```
 
 You probably want to replace the tag with something besides my dockerhub repo.\
@@ -87,6 +87,10 @@ Go to [http://localhost:4000](http://localhost:4000) to view it :smile:
 
 ## Deploy
 
-Not sure why anyone besides me would want to deploy this project but I will document the process anyway.
+Not sure why anyone besides me would want to deploy this project but I will document the process anyway. I wrote a script to execute all of the steps in the deployment process. In my case, I am currently using a Linux VM on AWS Lightsail with docker installed. If you really want to deploy it yourself you can modify this script to work with your specific deployment environment.
+
+```
+./deploy.sh
+```
 
 

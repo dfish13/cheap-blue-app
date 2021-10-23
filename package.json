@@ -7,13 +7,14 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon --ignore client/ server.js",
     "db": "docker-compose run -d --service-ports --name postgres db",
-    "pgadmin": "docker-compose run -d --service-ports --name pgadmin pgadmin"
+    "pgadmin": "docker-compose run -d --service-ports --name pgadmin pgadmin",
+    "production": "NODE_ENV=production nodemon --ignore client/ server.js",
+    "dev": "concurrently \"npm start\" \"npm start --prefix client\""
   },
   "author": "Duncan Fisher",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "concurrently": "^6.3.0",
     "connect-pg-simple": "^7.0.0",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
@@ -22,6 +23,7 @@
     "pg": "^8.7.1"
   },
   "devDependencies": {
+    "concurrently": "^6.3.0",
     "nodemon": "^2.0.14"
   }
 }

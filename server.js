@@ -143,8 +143,9 @@ app.post('/perft', (req, res) => {
   .catch((err) => console.log(err))
 })
 
-if (process.env.BUILD) {
-  app.get('*', (req, res) => {
+if (process.env.NODE_ENV) {
+  app.use(express.static(path.join(__dirname, 'client/build')))
+  app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, 'client/build/index.html'))
   })
 }

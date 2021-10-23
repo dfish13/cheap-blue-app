@@ -2,6 +2,7 @@
 .git*
 client
 secrets
+deploy
 sql
 node_modules
 Dockerfile

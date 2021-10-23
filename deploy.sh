@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # configure for deployed environment
-cp deploy/.env ./.env.build
+cp deploy/.env .env
 cp deploy/.dockerignore .
 
 # Build optimized frontend
@@ -19,7 +19,7 @@ docker build -t duncanfish/deployment-images:cb-server .
 docker push duncanfish/deployment-images:cb-server
 
 # undo changes to working directory
-git checkout .env.build
+git checkout .env
 git checkout .dockerignore
 
 # SSH to host server
