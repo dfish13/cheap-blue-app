@@ -64,7 +64,7 @@ const GameConfig = () => {
             `[White "${config.isBlack ? auth.session.uname : "Cheap Blue"}"]`,
             `[Black "${config.isBlack ? "Cheap Blue" : auth.session.uname}"]`,
             `[pvSort "${config.pvSort ? "On" : "Off"}"]`,
-            `[thinkingTime "${timeFormat(config.thinkingTime)}"]`,
+            `[thinkingTime "${timeFormat(thinkingTime)}"]`,
             ''
         ]
         
@@ -90,7 +90,7 @@ const GameConfig = () => {
                         label="PV Sort (Increases playing strength)"
                     />
                     <Typography id="input-slider" gutterBottom>
-                        Thinking time
+                        Engine thinking time
                     </Typography>
                     <Slider
                         aria-label="Thinking Time"

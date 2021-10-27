@@ -40,7 +40,7 @@ const PerftUtil = ({fen}) => {
     )
 
     const perft = () => {
-        axios.post('/perft', { fen: fen, depth: depth})
+        axios.post('api/engine/perft', { fen: fen, depth: depth})
         .then((res) => {
             setPerftResults(res.data)
         })

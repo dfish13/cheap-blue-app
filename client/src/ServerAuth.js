@@ -5,7 +5,7 @@ const ServerAuth = {
     isAuthenticated: false,
 
     getsession(cb) {
-      axios.post('/getsession', {})
+      axios.post('/api/auth/getsession', {})
       .then((res) => {
         console.log(res.data.message)
         if (res.data.success)
@@ -19,18 +19,18 @@ const ServerAuth = {
     },
 
     move(body, cb) {
-      axios.post('/move', body)
+      axios.post('/api/engine/move', body)
       .then((res) => {
         cb(res)
       })
     },
 
     addgame(values) {
-      axios.post('/addgame', {values: values})
+      axios.post('/api/engine/addgame', {values: values})
     },
 
     login(uname, pass, cb, errorCB) {
-      axios.post('/login', {uname: uname, pass: pass})
+      axios.post('/api/auth/login', {uname: uname, pass: pass})
       .then((res) => {
         console.log(res.data.message)
         if (res.data.success)
@@ -44,7 +44,7 @@ const ServerAuth = {
     },
 
     logout(s, cb) {
-      axios.post('/logout', {session_data: s})
+      axios.post('/api/auth/logout', {session_data: s})
       .then((res) => {
         console.log(res.data.message)
         if (res.data.success)
@@ -56,7 +56,7 @@ const ServerAuth = {
     },
 
     adduser(uname, pass, cb, errorCB) {
-      axios.post('/adduser', {uname: uname, pass: pass})
+      axios.post('/api/auth/adduser', {uname: uname, pass: pass})
       .then((res) => {
         console.log(res.data.message)
         if (res.data.success)
@@ -70,7 +70,7 @@ const ServerAuth = {
     },
 
     syncsession(s) {
-      axios.post('/syncsession', { session_data: s })
+      axios.post('/api/auth/syncsession', { session_data: s })
     }
 };
 

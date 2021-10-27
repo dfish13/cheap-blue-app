@@ -5,11 +5,11 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --ignore client/ server.js",
+    "start": "nodemon --ignore client/ app.js",
     "db": "docker-compose run -d --service-ports --name postgres db",
     "pgadmin": "docker-compose run -d --service-ports --name pgadmin pgadmin",
-    "production": "NODE_ENV=production nodemon --ignore client/ server.js",
-    "dev": "concurrently \"npm start\" \"npm start --prefix client\""
+    "production": "NODE_ENV=production nodemon --ignore client/ app.js",
+    "dev": "concurrently -n server,client -c \"bgBlack.bold,bgBlue.bold\" \"npm start\" \"npm start --prefix client\""
   },
   "author": "Duncan Fisher",
   "license": "ISC",
