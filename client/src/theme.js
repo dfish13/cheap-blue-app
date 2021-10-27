@@ -1,13 +1,13 @@
 import { createTheme } from '@mui/material/styles'
-import { lightGreen } from '@mui/material/colors';
+import { blue, amber } from '@mui/material/colors';
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#4169e1", // royalblue
+      main: blue['A400'],
     },
     secondary: {
-      main: lightGreen[500],
+      main: amber[50],
     },
   },
   typography: {

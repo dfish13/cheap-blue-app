@@ -1,4 +1,7 @@
-const { addGame } = require('../db')
+const {
+  addGame,
+  fetchGamesByUserId
+} = require('../db')
 
 const util = require('util')
 const execFile = util.promisify(require('child_process').execFile)
@@ -54,8 +57,16 @@ const addgame = (req, res) => {
   res.send({success: true, message: "Game added"})
 }
 
+const fetchgames = async (req, res) => {
+  const rows = await fetchGamesByUserId(req.body.uid)
+  console.log(rows)
+
+  res.send({success: true, rows: rows, message: 'Fetched games for user'})
+}
+
 module.exports = {
   move,
   perft,
-  addgame
+  addgame,
+  fetchgames
 }

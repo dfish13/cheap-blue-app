@@ -46,6 +46,7 @@ export default function NavBar() {
   }
 
   const clickNav = (route) => {
+    closeAccountMenu()
     closeNavMenu()
     history.push(route)
   }
@@ -53,7 +54,12 @@ export default function NavBar() {
   const accountMenuItems = () => {
     let menuItems = []
     if (auth.session) {
-      menuItems.push(<MenuItem>{auth.session.uname}</MenuItem>)
+      menuItems.push(
+        <MenuItem>
+          <Typography color="primary">{auth.session.uname}</Typography>
+        </MenuItem>
+      )
+      menuItems.push(<MenuItem onClick={() => clickNav('/games')}>Games</MenuItem>)
       menuItems.push(
         <MenuItem onClick={handleLogout}>
           <Logout fontSize="small" sx={{pr: 1}} />
@@ -70,10 +76,10 @@ export default function NavBar() {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-          <Box sx={{p: 1}}>
+          {false && <Box sx={{p: 1}}>
             <img src={window.location.origin + '/logo64.png'} alt='Logo' />
-          </Box>
-          <Typography variant="h4" component="div" sx={{ flexGrow: 1, pl: 2 }}>
+          </Box>}
+          <Typography variant="h4" component="div" sx={{ flexGrow: 1}}>
             Cheap Blue
           </Typography>
           {(

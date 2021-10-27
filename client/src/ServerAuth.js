@@ -71,6 +71,16 @@ const ServerAuth = {
 
     syncsession(s) {
       axios.post('/api/auth/syncsession', { session_data: s })
+    },
+
+    fetchgames(uid, cb) {
+      axios.post('/api/engine/games', {uid: uid})
+      .then((res) => {
+        console.log(res.data.message)
+        console.log(res.data)
+        if (res.data.success)
+          cb(res.data.rows)
+      })
     }
 };
 

@@ -73,10 +73,24 @@ const addGame = async (values) => {
   await pool.query(query)
 }
 
-exports.sessionPool = sessionPool
-exports.addUser = addUser
-exports.updateUserSession = updateUserSession
-exports.fetchUserById = fetchUserById
-exports.fetchUser = fetchUser
-exports.fetchAllUsers = fetchAllUsers
-exports.addGame = addGame
+fetchGamesByUserId = async (uid) => {
+  const query = {
+    name: 'fetch-games-by-user-id',
+    text: 'SELECT * FROM games WHERE user_id = $1',
+    values: [uid]
+  }
+
+  const qRes = await pool.query(query)
+  return qRes.rows
+}
+
+module.exports = {
+  sessionPool,
+  addUser,
+  updateUserSession,
+  fetchAllUsers,
+  fetchUser,
+  fetchUserById,
+  addGame,
+  fetchGamesByUserId
+}

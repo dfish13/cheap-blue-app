@@ -17,6 +17,7 @@ import { LoginDialog } from "./components/Dialogs";
 import theme from "./theme.js"
 
 import { ThemeProvider } from "@mui/material";
+import Games from "./pages/Games.js";
 
 export default function App() {
   return (
@@ -38,6 +39,9 @@ export default function App() {
               <Route path="/play">
                 <PPlayPage />
               </Route>
+              <Route path="/games">
+                <GamesPage />
+              </Route> 
             </Switch>
           </div>
         </Router>
@@ -109,6 +113,14 @@ function PPlayPage() {
   return (
     <PrivatePage>
       <PlayPage />
+    </PrivatePage>
+  )
+}
+
+function GamesPage()  {
+  return (
+    <PrivatePage>
+      <Games />
     </PrivatePage>
   )
 }

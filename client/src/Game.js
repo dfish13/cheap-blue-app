@@ -10,6 +10,7 @@ import { useAuth } from './hooks/useAuth';
 import ServerAuth from './ServerAuth';
 import { ExitDialog, ResignDialog, ResultDialog } from './components/Dialogs';
 import { makePGN } from './components/GameConfig';
+import theme from './theme'
 
 const MyGame = () => {
 
@@ -169,8 +170,8 @@ const MyGame = () => {
         }}
         onSquareClick={onSquareClick}
         squareStyles={squareStyles}
-        lightSquareStyle={{ backgroundColor: "Cornsilk" }}
-        darkSquareStyle={{ backgroundColor: "RoyalBlue" }}
+        lightSquareStyle={{ backgroundColor: theme.palette.secondary.main }}
+        darkSquareStyle={{ backgroundColor: theme.palette.primary.main }}
         orientation={auth.session.game.isBlack ? "black" : "white" }
       />
     </Box>
