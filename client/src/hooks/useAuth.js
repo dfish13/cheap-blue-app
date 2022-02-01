@@ -40,7 +40,8 @@ const useProvideAuth = () => {
         setSession({
             uid: session.uid,
             uname: session.uname,
-            game: gameState
+            game: gameState,
+            is_admin: session.is_admin
         })
     }
 

@@ -14,38 +14,49 @@ import GameConfig from "./components/GameConfig"
 import { ProvideAuth, useAuth } from './hooks/useAuth'
 import NavBar from "./components/NavBar";
 import { LoginDialog } from "./components/Dialogs";
-import theme from "./theme.js"
+import { theme, adminTheme } from "./theme.js"
 
 import { ThemeProvider } from "@mui/material";
 import Games from "./pages/Games.js";
 
 export default function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <ProvideAuth>
-        <Router>
-          <div>
-            <NavBar />
-            <Switch>
-              <Route exact path="/">
-                <Redirect to="/home" />
-              </Route>
-              <Route path="/home">
-                <HomePage />
-              </Route>
-              <Route path="/about">
-                <AboutPage />
-              </Route> 
-              <Route path="/play">
-                <PPlayPage />
-              </Route>
-              <Route path="/games">
-                <GamesPage />
-              </Route> 
-            </Switch>
-          </div>
-        </Router>
-      </ProvideAuth>
+    <ProvideAuth>
+      <AppWithAuth />
+    </ProvideAuth>
+  );
+}
+
+const AppWithAuth = () =>
+{
+  const auth = useAuth()
+  const myTheme = (auth.session && auth.session.is_admin) ? adminTheme : theme
+  console.log(myTheme)
+
+  return (
+    <ThemeProvider theme={myTheme}>
+      <Router>
+        <div>
+          <NavBar />
+          <Switch>
+            <Route exact path="/">
+              <Redirect to="/home" />
+            </Route>
+            <Route path="/home">
+              <HomePage />
+            </Route>
+            <Route path="/about">
+              <AboutPage />
+            </Route> 
+            <Route path="/play">
+              <PPlayPage />
+            </Route>
+            <Route path="/games">
+              <GamesPage />
+            </Route> 
+          </Switch>
+        </div>
+      </Router>
     </ThemeProvider>
   );
 }

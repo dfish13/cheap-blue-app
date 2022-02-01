@@ -5,17 +5,18 @@ import {useEffect, useState, useRef } from 'react';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
+import { useTheme } from '@mui/material';
 
 import { useAuth } from './hooks/useAuth';
 import ServerAuth from './ServerAuth';
 import { ExitDialog, ResignDialog, ResultDialog } from './components/Dialogs';
 import { makePGN } from './components/GameConfig';
-import theme from './theme'
 
 const MyGame = () => {
 
   const auth = useAuth()
   const game = useRef(new Chess())
+  const theme = useTheme()
   const thinking = useRef(Boolean())
   const [fen, setFen] = useState(null)
   const [selectedSquare, setSelectedSquare] = useState('')

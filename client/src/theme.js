@@ -1,7 +1,7 @@
 import { createTheme } from '@mui/material/styles'
-import { blue, amber } from '@mui/material/colors';
+import { blue, amber, red } from '@mui/material/colors';
 
-const theme = createTheme({
+export const theme = createTheme({
   palette: {
     primary: {
       main: blue['A400'],
@@ -15,4 +15,16 @@ const theme = createTheme({
   }
 })
 
-export default theme
+export const adminTheme = createTheme({
+  palette: {
+    primary: {
+      main: red['A200'],
+    },
+    secondary: {
+      main: amber[50],
+    },
+  },
+  typography: {
+    fontFamily: "Ubuntu"
+  }
+})

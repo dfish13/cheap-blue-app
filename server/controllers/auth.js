@@ -14,8 +14,9 @@ const login = async (req, res) => {
     .then((result) => {
       if (result) {
         // Session data is null the first time logging in with one of the default users.
-        const sd = user.session_data || {uid: user.id, uname: user.uname}
+        const sd = user.session_data || {uid: user.id, uname: user.uname }
         req.session.data = sd
+        sd.is_admin = user.is_admin
         res.send({success: true, data: sd, message: "Login successful"})
       }
       else 
