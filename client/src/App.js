@@ -90,7 +90,9 @@ function HomePage() {
       <h3>Home</h3>
       <p>So this is the home page. You can click About in the menu above
         (the 3 bars thing) to read a little bit about the Cheap Blue chess engine.
-        Or you can choose Play to play against it!
+        Or you can choose Play to play against it! Once you log in you can view
+        your past games and copy the PGN's to input into your favorite analysis
+        tool (Lichess.com has free analysis for example).
         Thats pretty much it. Gonna add some more stuff soon though.
       </p>
     </div>
