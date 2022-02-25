@@ -179,18 +179,43 @@ export const ResultDialog = ({open, result, handleClose}) => {
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {resultMessage[result].title}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            {resultMessage[result].contentText}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button variant="contained" onClick={handleClose}>Close</Button>
-        </DialogActions>
-      </Dialog>
+    >
+      <DialogTitle id="alert-dialog-title">
+        {resultMessage[result].title}
+      </DialogTitle>
+      <DialogContent>
+        <DialogContentText id="alert-dialog-description">
+          {resultMessage[result].contentText}
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button variant="contained" onClick={handleClose}>Close</Button>
+      </DialogActions>
+    </Dialog>
+  )
+}
+
+export const PromotionDialog = ({open, handlePromotion}) => {
+  return (
+    <Dialog
+        open={open}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+    >
+      <DialogTitle id="alert-dialog-title">
+        {"Promote"}
+      </DialogTitle>
+      <DialogContent>
+        <DialogContentText id="alert-dialog-description">
+          {"Choose a piece to promote to."}
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button variant="contained" onClick={() => handlePromotion('q')}>Queen</Button>
+        <Button variant="contained" onClick={() => handlePromotion('r')}>Rook</Button>
+        <Button variant="contained" onClick={() => handlePromotion('n')}>Knight</Button>
+        <Button variant="contained" onClick={() => handlePromotion('b')}>Bishop</Button>
+      </DialogActions>
+    </Dialog>
   )
 }

@@ -9,7 +9,7 @@
     "db": "docker-compose run -d --service-ports --name postgres db",
     "pgadmin": "docker-compose run -d --service-ports --name pgadmin pgadmin",
     "production": "NODE_ENV=production nodemon --ignore client/ app.js",
-    "dev": "concurrently -n server,client -c \"bgBlack.bold,bgBlue.bold\" \"npm start\" \"npm start --prefix client\""
+    "dev": "concurrently -n server,client \"npm start\" \"npm start --prefix client\""
   },
   "author": "Duncan Fisher",
   "license": "ISC",

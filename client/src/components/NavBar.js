@@ -141,6 +141,7 @@ export default function NavBar() {
                 <MenuItem onClick={() => clickNav('/home')}>Home</MenuItem>
                 <MenuItem onClick={() => clickNav('/about')}>About</MenuItem>
                 <MenuItem onClick={() => clickNav('/play')}>Play</MenuItem>
+                <MenuItem onClick={() => clickNav('/analysis')}>Analysis</MenuItem>
               </Menu>
             </div>
           )}

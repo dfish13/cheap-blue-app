@@ -1,5 +1,5 @@
 import { createTheme } from '@mui/material/styles'
-import { blue, amber, red } from '@mui/material/colors';
+import { blue, amber, purple} from '@mui/material/colors';
 
 export const theme = createTheme({
   palette: {
@@ -18,7 +18,7 @@ export const theme = createTheme({
 export const adminTheme = createTheme({
   palette: {
     primary: {
-      main: red['A200'],
+      main: purple[300],
     },
     secondary: {
       main: amber[50],

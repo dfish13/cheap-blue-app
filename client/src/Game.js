@@ -58,7 +58,6 @@ const MyGame = () => {
     }
 
     ServerAuth.move(body, (res) => {
-      console.log(res.data.message)
       if (res.data.success)
         makeMove(res.data.move)
       thinking.current = false
