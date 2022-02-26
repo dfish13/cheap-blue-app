@@ -5,9 +5,12 @@ import {useEffect, useState, useRef } from 'react';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
-import { Typography, useTheme } from '@mui/material';
-
-import { Oval } from 'react-loader-spinner';
+import { 
+  CircularProgress,
+  Typography,
+  useTheme,
+  LinearProgress
+} from '@mui/material';
 
 import { PromotionDialog } from './Dialogs';
 import ServerAuth from '../ServerAuth';
@@ -163,17 +166,6 @@ const AnalysisBoard = () => {
     <Stack padding={2} paddingBottom={0} direction="row">
       <Button variant="contained" onClick={undo}>Undo</Button>
       <Button onClick={flipBoard}>Flip Board</Button>
-      { loading ?
-        <Oval
-          ariaLabel="loading-indicator"
-          height={30}
-          width={30}
-          strokeWidth={5}
-          color={theme.palette.primary.main}
-          secondaryColor="SpringGreen"
-        /> :
-        <EvalBox evaluation={evaluation} /> 
-      }
     </Stack>
     
     <Box sx={{p: 2}}>
@@ -193,6 +185,12 @@ const AnalysisBoard = () => {
         orientation={orientation}
       />
     </Box>
+    <Stack padding={2} paddingTop={0} direction="column">
+      { loading ?
+        <CircularProgress thickness={4} /> :
+        <EvalBox evaluation={evaluation} /> 
+      }
+    </Stack>
     
     <PromotionDialog
       open={promotionDialog[0]}
@@ -203,11 +201,19 @@ const AnalysisBoard = () => {
 }
 
 const EvalBox = ({ evaluation }) => {
+  const theme = useTheme()
+
+  const sign = (evaluation.eval < 0.0) ? -1.0 : 1.0
+  const offset = 25.0 * Math.log10(1.0 + Math.abs(evaluation.eval))
+
+
+  const progress = Math.round(50 + (sign * offset))
   return (
-    <>
-      <Typography marginRight={2}>Eval: {evaluation.eval}</Typography>
-      <Typography>Move: {evaluation.move}</Typography>
-    </>
+    <Box bgcolor={theme.palette.primary.light} width={350}>
+      <Typography >Evaluation = {evaluation.eval}</Typography>
+      <Typography>Top move = {evaluation.move}</Typography>
+      <LinearProgress sx={{height: 10, color: "black"}} variant="determinate" width={350} value={progress}></LinearProgress>
+    </Box>
   )
 }
 
