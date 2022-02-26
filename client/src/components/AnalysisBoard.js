@@ -28,7 +28,7 @@ const AnalysisBoard = () => {
   const [evaluation, setEvaluation] = useState({eval: 0.0, move: ""})
   const [loading, setLoading] = useState(false)
   
-  const potentialMoveStyle = { background: "radial-gradient(circle, SpringGreen 20%, transparent 40%)" }
+  const potentialMoveStyle = { background: "radial-gradient(circle, SpringGreen 30%, transparent 30%)" }
 
   useEffect(() => {
     setFen(game.current.fen())
