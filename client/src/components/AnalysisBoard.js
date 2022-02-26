@@ -186,10 +186,8 @@ const AnalysisBoard = () => {
       />
     </Box>
     <Stack padding={2} paddingTop={0} direction="column">
-      { loading ?
-        <CircularProgress thickness={4} /> :
-        <EvalBox evaluation={evaluation} /> 
-      }
+      <EvalBox evaluation={evaluation} />
+      { loading && <CircularProgress thickness={4} /> }
     </Stack>
     
     <PromotionDialog
@@ -209,7 +207,7 @@ const EvalBox = ({ evaluation }) => {
 
   const progress = Math.round(50 + (sign * offset))
   return (
-    <Box bgcolor={theme.palette.primary.light} width={350}>
+    <Box bgcolor={theme.palette.primary.light} width={350} marginBottom={2}>
       <Typography >Evaluation = {evaluation.eval}</Typography>
       <Typography>Top move = {evaluation.move}</Typography>
       <LinearProgress sx={{height: 10, color: "black"}} variant="determinate" width={350} value={progress}></LinearProgress>
