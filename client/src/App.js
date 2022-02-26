@@ -127,9 +127,7 @@ function PlayPage() {
 
 function AnalysisPage() {
   return (
-    <PrivatePage>
-      <AnalysisBoard />
-    </PrivatePage>
+    <AnalysisBoard />
   )
 }
 
