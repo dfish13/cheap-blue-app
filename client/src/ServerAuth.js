@@ -25,6 +25,13 @@ const ServerAuth = {
       })
     },
 
+    eval(body, cb) {
+      axios.post('/api/engine/eval', body)
+      .then((res) => {
+        cb(res)
+      })
+    },
+
     addgame(values) {
       axios.post('/api/engine/addgame', {values: values})
     },

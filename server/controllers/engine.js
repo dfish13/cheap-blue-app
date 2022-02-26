@@ -44,6 +44,21 @@ const move = (req, res) => {
   .catch((err) => console.log(err));
 }
 
+const eval = (req, res) => {
+  const args = [
+    '-e',
+    req.body.thinkingTime,
+    req.body.fen
+  ]
+
+  execFile(enginePath, args)
+  .then(({stdout}) => {
+    const a = stdout.split(' ')
+    res.send({success: true, eval: a[0], move: a[1], message: 'Engine evaluation'})
+  })
+  .catch((err) => console.log(err));
+}
+
 const perft = (req, res) => {
   execFile(enginePath, ['-p', req.body.depth, req.body.fen])
   .then(({stdout}) => {
@@ -66,6 +81,7 @@ const fetchgames = async (req, res) => {
 
 module.exports = {
   move,
+  eval,
   perft,
   addgame,
   fetchgames

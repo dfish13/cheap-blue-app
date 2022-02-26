@@ -5,22 +5,25 @@ import {useEffect, useState, useRef } from 'react';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
-import { useTheme } from '@mui/material';
+import { Typography, useTheme } from '@mui/material';
+
+import { Oval } from 'react-loader-spinner';
 
 import { PromotionDialog } from './Dialogs';
+import ServerAuth from '../ServerAuth';
 
 const AnalysisBoard = () => {
 
   const game = useRef(new Chess())
   const theme = useTheme()
-  const thinking = useRef(Boolean())
   const [fen, setFen] = useState(null)
   const [selectedSquare, setSelectedSquare] = useState('')
   const [squareStyles, setSquareStyles] = useState({})
   const [orientation, setOrientation] = useState('white')
   const [promotionDialog, setPromotionDialog] = useState([false, 'e2', 'e2'])
   const [promotionPiece, setPromotionPiece] = useState('q')
-  const [evaluation, setEvaluation] = useState(null)
+  const [evaluation, setEvaluation] = useState({eval: 0.0, move: ""})
+  const [loading, setLoading] = useState(false)
   
   const potentialMoveStyle = { background: "radial-gradient(circle, SpringGreen 20%, transparent 40%)" }
 
@@ -35,10 +38,14 @@ const AnalysisBoard = () => {
       promotion: promotionPiece
     }
 
-    if (!thinking.current)
-      makeMove(move)
+    makeMove(move)
     setSquareStyles({})
   }, [promotionPiece])
+
+  useEffect(() => {
+    getEngineEval()
+    setLoading(true)
+  }, [fen])
 
   const isPromotion = (sourceSquare, targetSquare) => {
     const moves = game.current.moves({
@@ -64,8 +71,7 @@ const AnalysisBoard = () => {
       promotion: 'q'
     }
 
-    if (!thinking.current)
-      makeMove(move)
+    makeMove(move)
     setSquareStyles({})
   }
 
@@ -77,6 +83,19 @@ const AnalysisBoard = () => {
       return false
     setFen(game.current.fen())
     return true
+  }
+
+  const getEngineEval = () => {
+    const body = {
+      thinkingTime: "2",
+      fen: fen
+    }
+
+    ServerAuth.eval(body, (res) => {
+      if (res.data.success)
+        setEvaluation({eval: Number(res.data.eval) / 100.0, move: res.data.move})
+      setLoading(false)
+    })
   }
 
   const onSquareClick = (square) => {
@@ -92,9 +111,7 @@ const AnalysisBoard = () => {
           to: square,
           promotion: 'q'
         }
-    
-        if (!thinking.current)
-          makeMove(move)
+        makeMove(move)
       }
       else
         return
@@ -146,6 +163,17 @@ const AnalysisBoard = () => {
     <Stack padding={2} paddingBottom={0} direction="row">
       <Button variant="contained" onClick={undo}>Undo</Button>
       <Button onClick={flipBoard}>Flip Board</Button>
+      { loading ?
+        <Oval
+          ariaLabel="loading-indicator"
+          height={30}
+          width={30}
+          strokeWidth={5}
+          color={theme.palette.primary.main}
+          secondaryColor="SpringGreen"
+        /> :
+        <EvalBox evaluation={evaluation} /> 
+      }
     </Stack>
     
     <Box sx={{p: 2}}>
@@ -170,6 +198,15 @@ const AnalysisBoard = () => {
       open={promotionDialog[0]}
       handlePromotion={handlePromotion}
     />
+    </>
+  )
+}
+
+const EvalBox = ({ evaluation }) => {
+  return (
+    <>
+      <Typography marginRight={2}>Eval: {evaluation.eval}</Typography>
+      <Typography>Move: {evaluation.move}</Typography>
     </>
   )
 }
