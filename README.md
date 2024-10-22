@@ -4,7 +4,7 @@
 
 
 
-Check out the deployed app [Cheap Blue](https://duncanfish.co).
+Check out the deployed app [Cheap Blue](https://d16mc0nsndq3dv.cloudfront.net/home).
 
 ## Develop
 
